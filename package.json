@@ -1,0 +1,14 @@
+{
+  "name": "wc3-translate",
+  "version": "1.0.0",
+  "description": "utils for translating a wc3 map",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "juvian",
+  "license": "ISC",
+  "dependencies": {
+    "wc3maptranslator": "1.1.0"
+  }
+}
