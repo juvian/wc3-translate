@@ -4,7 +4,8 @@
   "description": "utils for translating a wc3 map",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "toJson": "node .\\toJson.js .\\data\\newUntranslated .\\data\\oldTranslated .\\data\\oldUntranslated .\\data\\newUntranslated\\output.json .\\plugins\\setChanged.js .\\plugins\\guessTranslations.js",
+    "toWar": "node .\\toWar.js .\\data\\newUntranslated .\\data\\newUntranslated\\output.json"
   },
   "author": "juvian",
   "license": "ISC",

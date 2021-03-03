@@ -19,7 +19,8 @@ const filesToProcess = {
     },
     "war3map.wts": {
         name: "strings",
-        parse: Translator.Strings.warToJson,
+        toJson: Translator.Strings.warToJson,
+        toWar: Translator.Strings.jsonToWar,
         afterParse: false,
         empty: {}
     },
@@ -51,13 +52,14 @@ const filesToProcess = {
     },
     "war3map.w3i": {
         name: "info",
-        parse: Translator.Info.warToJson,
+        toJson: Translator.Info.warToJson,
+        toWar: Translator.Info.jsonToWar,
         afterParse: false,
         empty: {}
     },
     "war3map.j": {
         name: "script",
-        parse: (b) => b.toString().split('\n').filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')),
+        toJson: (b) => b.toString(),
         afterParse: false,
         empty: {}
     }
@@ -67,9 +69,11 @@ const filesToProcess = {
 for (const file of Object.values(filesToProcess)) {
     if (file.hasOwnProperty('afterParse') == false) file.afterParse = toEntries;
     if (file.hasOwnProperty('empty') == false) file.empty = {custom: {}, standard: {}};
-    if (file.hasOwnProperty('parse') == false) file.parse = Translator.Objects.warToJson.bind(null, file.name);
+    if (file.hasOwnProperty('toJson') == false) file.toJson = Translator.Objects.warToJson.bind(null, file.name);
+    if (file.hasOwnProperty('toWar') == false) file.toWar = Translator.Objects.jsonToWar.bind(null, file.name);
 }
 
+const quotesRegex = /"((?:\\.|[^"\\])*)"/g;
 
-module.exports = {filesToProcess};
+module.exports = {filesToProcess, quotesRegex};
 

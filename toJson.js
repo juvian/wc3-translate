@@ -1,55 +1,10 @@
 const fs = require('fs');
-const path = require('path');
-const {filesToProcess} = require('./config');
+const {filesToProcess, quotesRegex} = require('./config');
+const Map = require('./utils/Map');
 
 const setChanged = (obj) => {
     if (obj.newUntranslated !== obj.oldUntranslated) {
         obj.changed = true;
-    }
-}
-
-class Map {
-    constructor() {        
-        for (const info of Object.values(filesToProcess)) {
-            this[info.name] = info.empty;
-        }
-
-        this.usedStrings = new Set();
-    }
-
-    parseFiles(folder) {
-        for (const file of Object.keys(filesToProcess)) {
-            this.parseFile(path.join(folder, file), filesToProcess[file]);
-        }
-    }
-
-    parseFile(path, info) {
-        if (!fs.existsSync(path)) return;
-
-        const buffer = fs.readFileSync(path);
-
-        const parsed = info.parse(buffer);
-
-        if (parsed.errors && parsed.errors.length) console.warn('errors parding ' + info.name, parsed.errors);
-
-        this[info.name] = parsed.json || parsed;
-    }
-
-    afterParseFiles() {
-        for (const info of Object.values(filesToProcess)) {
-            if (info.afterParse) info.afterParse(this[info.name]);
-        }
-    }
-
-    //if string comes from wts file, replace and mark as seen in order to ignore later when outputing string
-    getString(str) {
-        if (str && str.match(/TRIGSTR_\d+/)) {
-            const index = parseInt(str.split('TRIGSTR_')[1]);
-            this.usedStrings.add(index);
-            return this.strings[index];
-        }
-
-        return str;
     }
 }
 
@@ -76,7 +31,7 @@ class Maps {
         } 
 
         output.info = this.processInfo();
-        output.scripts = this.processScripts();
+        output.script = this.processScript();
         output.strings = this.processStrings();
 
         return output;
@@ -122,11 +77,11 @@ class Maps {
     }
 
     isSameLine(l1, l2) {
-        return l1 == l2 || (l1.split('"').length == l2.split('"').length && l1.replace(/"((?:\\.|[^"\\])*)"/g, "") == l2.replace(/"((?:\\.|[^"\\])*)"/g, ""));
+        return l1 == l2 || (l1.split('"').length == l2.split('"').length && l1.replace(quotesRegex, "") == l2.replace(quotesRegex, ""));
     }
 
     getMatches(line, map, addString) {
-        return(line.match(/"((?:\\.|[^"\\])*)"/g) || []).map(l => l.substring(1, l.length - 1)).map(s => map.getString(s))
+        return(line.match(quotesRegex) || []).map(l => l.substring(1, l.length - 1)).map(s => map.getString(s))
             .filter(l => !l.endsWith('.mp3') && !l.endsWith('.wav') && !l.endsWith('.mdl') && !l.endsWith('.mdx') && l.trim());
     }
 
@@ -136,10 +91,12 @@ class Maps {
     //then when we iterate all strings in newUntranslated, we check if we already know the translation from the other 2 maps
     //we can't know if it changed so we split into matched (things we already saw the translation) and unmatched (things we didn't)
 
-    processScripts() {
+    processScript() {
         const strings = {};
         const newStrings = {matched: {}, unmatched: {}};
         let idx = 0;
+
+        this.maps.forEach(m => m.script = m.script.split('\n').filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')))
 
         for (let j = 0; j < this.oldUntranslated.script.length; j++) {
             for (let i = idx; i < Math.min(this.oldTranslated.script.length, idx + 5000); i++) {
