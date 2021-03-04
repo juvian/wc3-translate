@@ -4,12 +4,13 @@
   "description": "utils for translating a wc3 map",
   "main": "index.js",
   "scripts": {
-    "toJson": "node .\\toJson.js .\\data\\newUntranslated .\\data\\oldTranslated .\\data\\oldUntranslated .\\data\\newUntranslated\\output.json .\\plugins\\setChanged.js .\\plugins\\guessTranslations.js",
-    "toWar": "node .\\toWar.js .\\data\\newUntranslated .\\data\\newUntranslated\\output.json"
+    "toJson": "node .\\toJson.js \".\\data\\newUntranslated\\korean 5.8k_un.w3x\" .\\data\\oldTranslated .\\data\\oldUntranslated .\\data\\newUntranslated\\output.json .\\plugins\\setChanged.js .\\plugins\\guessTranslations.js",
+    "toWar": "node .\\toWar.js \".\\data\\newUntranslated\\korean 5.8k_un.w3x\" .\\data\\newUntranslated\\output.json"
   },
   "author": "juvian",
   "license": "ISC",
   "dependencies": {
+    "@wowserhq/stormjs": "^0.4.1",
     "wc3maptranslator": "1.1.0"
   }
 }

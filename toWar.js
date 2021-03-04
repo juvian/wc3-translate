@@ -1,21 +1,17 @@
-const {filesToProcess, quotesRegex} = require('./config');
+const {filesToProcess, quotesRegex, isMap} = require('./config');
 const fs = require('fs');
 const Map = require('./utils/Map');
 const path = require('path');
 
-function main() {
+async function main() {
     const file = process.argv.slice(2).find(arg => arg.endsWith('.json') && fs.existsSync(arg));
-    const mapLocation = process.argv.slice(2).find(arg => !arg.endsWith('.json') && !arg.endsWith('.js') && fs.existsSync(arg) && fs.lstatSync(arg).isDirectory());
-
-    if (!fs.existsSync(path.join(mapLocation, 'output'))){
-        fs.mkdirSync(path.join(mapLocation, 'output'));
-    }
+    const mapLocation = process.argv.slice(2).find(isMap);
 
     const input = JSON.parse(fs.readFileSync(file));
 
-    const map = new Map();
+    const map = new Map(mapLocation);
 
-    map.parseFiles(mapLocation);
+    await map.parseFiles();
 
     for (const [name, file] of Object.entries(filesToProcess)) {
         if (file.props) {
@@ -45,13 +41,10 @@ function main() {
                 }
             }
         } else if (name == "war3map.j") {
-            const script = map.script.replace(quotesRegex, (match) => {
+            map.script = map.script.replace(quotesRegex, (match) => {
                 const val = map.getString(match.substring(1, match.length - 1));
                 return '"' + (input.script.matched[val] || input.script.unmatched[val] || val) + '"';
             });
-            
-            fs.writeFileSync(path.join(mapLocation, 'output', name), script);
-            continue;
         } else if (name == "war3map.wts") {
             for (const key of Object.keys(map.strings)) {
                 map.strings[key] = input.strings[key]?.newTranslated || input.strings[key]?.oldTranslated || map.strings[key];
@@ -70,11 +63,7 @@ function main() {
             }
         }
 
-        toWar = file.toWar(map[file.name]);
-
-        if (toWar.errors.length) console.warn(toWar.errors);
-
-        fs.writeFileSync(path.join(mapLocation, 'output', name), toWar.buffer);
+        map.writeWar(name, file);
     }
 }
 

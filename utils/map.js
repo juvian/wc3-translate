@@ -1,9 +1,15 @@
-const {filesToProcess} = require('../config');
+const {filesToProcess, isMPQ} = require('../config');
 const path = require('path');
 const fs = require('fs');
+const { FS, MPQ } = require('@wowserhq/stormjs');
+
+FS.mkdir('/maps');
 
 class Map {
-    constructor() {        
+    constructor(folder) {   
+        this.folder = folder;
+        this.isMPQ = isMPQ(folder);
+
         for (const info of Object.values(filesToProcess)) {
             this[info.name] = info.empty;
         }
@@ -11,17 +17,37 @@ class Map {
         this.usedStrings = new Set();
     }
 
-    parseFiles(folder) {
-        for (const file of Object.keys(filesToProcess)) {
-            this.parseFile(path.join(folder, file), filesToProcess[file]);
+    async parseFiles() {
+        console.log("parsing map " + this.folder);
+
+        let mpq;
+
+        if (this.isMPQ) {
+            FS.mount(FS.filesystems.NODEFS, { root: path.join(path.resolve(this.folder), '..') }, '/maps');
+            mpq = await MPQ.open('/maps/' + path.basename(this.folder), 'r');
         }
+
+        for (const file of Object.keys(filesToProcess)) {
+            let buffer;
+
+            if (mpq) {
+                if (!mpq.hasFile(file) && file == "war3map.j" && mpq.hasFile('scrips/war3map.j')) file = 'scrips/war3map.j';
+                if (mpq.hasFile(file)) {
+                    const f = mpq.openFile(file);
+                    buffer = Buffer.from(f.read());
+                    f.close();
+                }
+            } else {
+                buffer = fs.existsSync(path.join(this.folder, file)) ? fs.readFileSync(path.join(this.folder, file)) : null;
+            }
+            
+            if(buffer) this.parseFile(buffer, filesToProcess[file]);
+        }
+
+        if (mpq) mpq.close();
     }
 
-    parseFile(path, info) {
-        if (!fs.existsSync(path)) return;
-
-        const buffer = fs.readFileSync(path);
-
+    parseFile(buffer, info) {
         const parsed = info.toJson(buffer);
 
         if (parsed.errors && parsed.errors.length) console.warn('errors parsing ' + info.name, parsed.errors);
@@ -44,6 +70,20 @@ class Map {
         }
 
         return str;
+    }
+
+    writeWar(name, file) {
+        const toWar = file.toWar(this[file.name]);
+
+        if (toWar.errors && toWar.errors.length) console.warn(toWar.errors);
+
+        const filePath = path.join(this.isMPQ ? path.join(path.resolve(this.folder), '..') : this.folder, "output", name);
+
+        if (!fs.existsSync(path.join(filePath, '..'))){
+            fs.mkdirSync(path.join(filePath, '..'));
+        }
+
+        fs.writeFileSync(filePath, toWar.buffer || toWar);
     }
 }
 

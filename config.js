@@ -1,4 +1,5 @@
 const Translator = require('wc3maptranslator');
+const fs = require('fs');
 
 const toEntries = (data) => {
     for (const key of Object.keys(data.custom)) {
@@ -60,6 +61,7 @@ const filesToProcess = {
     "war3map.j": {
         name: "script",
         toJson: (b) => b.toString(),
+        toWar: (b) => b,
         afterParse: false,
         empty: {}
     }
@@ -68,12 +70,14 @@ const filesToProcess = {
 
 for (const file of Object.values(filesToProcess)) {
     if (file.hasOwnProperty('afterParse') == false) file.afterParse = toEntries;
-    if (file.hasOwnProperty('empty') == false) file.empty = {custom: {}, standard: {}};
+    if (file.hasOwnProperty('empty') == false) file.empty = {custom: {}, original: {}};
     if (file.hasOwnProperty('toJson') == false) file.toJson = Translator.Objects.warToJson.bind(null, file.name);
     if (file.hasOwnProperty('toWar') == false) file.toWar = Translator.Objects.jsonToWar.bind(null, file.name);
 }
 
 const quotesRegex = /"((?:\\.|[^"\\])*)"/g;
+const isMPQ = (path) => path.endsWith('.w3x') || path.endsWith('.w3m') || path.endsWith('.mpq');
+const isMap = (path) => !path.endsWith('.json') && !path.endsWith('.js') && fs.existsSync(path) && (isMPQ(path) || fs.lstatSync(path).isDirectory());
 
-module.exports = {filesToProcess, quotesRegex};
+module.exports = {filesToProcess, quotesRegex, isMPQ, isMap};
 

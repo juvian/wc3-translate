@@ -1,12 +1,7 @@
 const fs = require('fs');
-const {filesToProcess, quotesRegex} = require('./config');
+const {filesToProcess, quotesRegex, isMap} = require('./config');
 const Map = require('./utils/Map');
 
-const setChanged = (obj) => {
-    if (obj.newUntranslated !== obj.oldUntranslated) {
-        obj.changed = true;
-    }
-}
 
 class Maps {
     add(map) {
@@ -80,7 +75,7 @@ class Maps {
         return l1 == l2 || (l1.split('"').length == l2.split('"').length && l1.replace(quotesRegex, "") == l2.replace(quotesRegex, ""));
     }
 
-    getMatches(line, map, addString) {
+    getMatches(line, map) {
         return(line.match(quotesRegex) || []).map(l => l.substring(1, l.length - 1)).map(s => map.getString(s))
             .filter(l => !l.endsWith('.mp3') && !l.endsWith('.wav') && !l.endsWith('.mdl') && !l.endsWith('.mdx') && l.trim());
     }
@@ -172,16 +167,16 @@ class Processor {
     }
 }
 
-function main() {
+async function main() {
     const maps = new Maps();
     const outputLocation = process.argv.slice(2).find(arg => arg.endsWith('.json'));
-    const mapLocations = process.argv.slice(2).filter(arg => !arg.endsWith('.json') && !arg.endsWith('.js') && fs.existsSync(arg) && fs.lstatSync(arg).isDirectory())
+    const mapLocations = process.argv.slice(2).filter(isMap);
     const plugins = process.argv.slice(2).filter(arg => arg.endsWith('.js') && fs.existsSync(arg)).map(p => require(p));
 
     for (const loc of mapLocations) {
-        const map = new Map();
+        const map = new Map(loc);
 
-        map.parseFiles(loc);
+        await map.parseFiles();
         map.afterParseFiles();
 
         maps.add(map);
