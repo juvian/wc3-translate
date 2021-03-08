@@ -44,7 +44,10 @@ class Map {
             if(buffer) this.parseFile(buffer, filesToProcess[file]);
         }
 
-        if (mpq) mpq.close();
+        if (mpq) {
+            mpq.close();
+            FS.unmount('/maps');
+        }
     }
 
     parseFile(buffer, info) {

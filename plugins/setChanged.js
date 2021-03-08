@@ -1,9 +1,10 @@
-const {objectIterator} = require('./utils');
+const {mapIterator} = require('../utils/utils');
 
 const afterParse = (output) => {
-    for (const [obj, prop] of objectIterator(output)) {
-        if (prop == "newUntranslated" && obj.hasOwnProperty("oldUntranslated") && obj[prop] !== obj.oldUntranslated) {
-            obj.changed = true;
+    for (const {id, data} of mapIterator(output)) {
+        if (data.hasOwnProperty("newUntranslated") && data.hasOwnProperty("oldUntranslated") && data.newUntranslated != data.oldUntranslated) {
+            data.changed = true;
+            data.newTranslated = data.newTranslated || "";
         }
     }
 }
