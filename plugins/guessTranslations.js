@@ -1,29 +1,23 @@
-const {filesToProcess} = require('../config');
-const {objectIterator} = require('./utils');
-
-const withProps = Object.values(filesToProcess).filter(v => v.props).map(v => v.name);
+const {mapIterator} = require('../utils/utils');
 
 const afterParse = (output) => {
-    const processed = new WeakSet();
-
-    for (const [obj, prop] of objectIterator(output)) {
-        if (obj.changed && !processed.has(obj)) {
-            processed.add(obj);
-            
-            //only numbers changed
-            if (obj.newUntranslated.replace(/\d+/g) == obj.oldUntranslated.replace(/\d+/g)) {
-                const n1 = obj.newUntranslated.match(/\d+/g) || [];
-                const n2 = obj.oldUntranslated.match(/\d+/g) || [];
-                const n3 = obj.oldTranslated.split(/\d+/g) || [];
+    for (const {id, data} of mapIterator(output)) {
+        if (data.changed && !data.newTranslated) {
+            //only numbers changed or tooltip color changed?
+            const regex = /(\\|cff[0-9A-Fa-f]{6}|\d+)/gi
+            if (data.newUntranslated.replace(regex) == data.oldUntranslated.replace(regex)) {
+                const n1 = data.newUntranslated.match(regex) || [];
+                const n2 = data.oldUntranslated.match(regex) || [];
+                const n3 = data.oldTranslated.match(regex) || [];
 
                 const used = new Set();
 
                 if (n1.length == n2.length) {
                     for (let i = 0; i < n1.length; i++) {
-                        let idx = 0;
+                        let idx = -1;
 
                         while(idx != -1 && used.has(idx)) {
-                            idx = n3.indexOf(n2[i], idx);
+                            idx = n3.indexOf(n2[i], idx + 1);
                         }
 
                         if (idx != -1) {
@@ -31,7 +25,9 @@ const afterParse = (output) => {
                             used.add(idx);
                         }
                     }
-                    obj.newTranslated = n3.join(''); 
+                    let idx = 0;
+                    data.newTranslated = data.oldTranslated.replace(regex, () => n3[idx++]);
+                    data.numberGuessed = true;
                 }
             }
         }
