@@ -43,7 +43,7 @@ async function main() {
         } else if (name == "war3map.j") {
             map.script = map.script.replace(quotesRegex, (match) => {
                 const val = map.getString(match.substring(1, match.length - 1));
-                return '"' + (input.script.matched[val] || input.script.unmatched[val] || val) + '"';
+                return '"' + (input.script[val]?.newTranslated || input.script[val]?.oldTranslated || val) + '"';
             });
         } else if (name == "war3map.wts") {
             for (const key of Object.keys(map.strings)) {

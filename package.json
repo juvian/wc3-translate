@@ -4,7 +4,7 @@
   "description": "utils for translating a wc3 map",
   "main": "index.js",
   "scripts": {
-    "toJson": "node .\\toJson.js \".\\data\\newUntranslated\\korean 5.8k_un.w3x\" .\\data\\oldTranslated .\\data\\oldUntranslated .\\data\\newUntranslated\\output.json .\\plugins\\setChanged.js .\\plugins\\guessTranslations.js",
+    "toJson": "node .\\toJson.js \"..\\eden\\eden 5.8h\\korean 5.8h_un.w3x\" \"..\\eden\\eden 5.8f\\eng 5.8f_un.w3x\" \"..\\eden\\eden 5.8f\\korean 5.8f_un.w3x\" .\\data\\output.json .\\plugins\\setChanged.js .\\plugins\\setKorean.js .\\plugins\\guessTranslations.js",
     "toWar": "node .\\toWar.js \".\\data\\newUntranslated\\korean 5.8k_un.w3x\" .\\data\\newUntranslated\\output.json"
   },
   "author": "juvian",

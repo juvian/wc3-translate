@@ -88,7 +88,7 @@ class Maps {
 
     processScript() {
         const strings = {};
-        const newStrings = {matched: {}, unmatched: {}};
+        const newStrings = {};
         let idx = 0;
 
         this.maps.forEach(m => m.script = m.script.split('\n').filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')))
@@ -112,8 +112,8 @@ class Maps {
 
         for (const line of this.newUntranslated.script) {
             for (const match of this.getMatches(line, this.newUntranslated, true)) {
-                if (strings[match]) newStrings.matched[match] = strings[match]
-                else newStrings.unmatched[match] = match;
+                newStrings[match] = newStrings[match] || {};
+                if (strings[match]) newStrings[match].oldTranslated = strings[match];
             }
         }
 
