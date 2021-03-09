@@ -1,7 +1,7 @@
 const fs = require('fs');
-const {filesToProcess, quotesRegex, isMap} = require('./config');
+const {filesToProcess, quotesRegex, isMap, isPlugin} = require('./config');
 const Map = require('./utils/Map');
-
+const path = require('path');
 
 class Maps {
     add(map) {
@@ -171,7 +171,12 @@ async function main() {
     const maps = new Maps();
     const outputLocation = process.argv.slice(2).find(arg => arg.endsWith('.json'));
     const mapLocations = process.argv.slice(2).filter(isMap);
-    const plugins = process.argv.slice(2).filter(arg => arg.endsWith('.js') && fs.existsSync(arg)).map(p => require(p));
+    const pluginsPaths = process.argv.slice(2).filter(isPlugin);
+
+    const plugins = pluginsPaths.map(p => require(path.resolve(p)));
+    const unused = process.argv.slice(2).filter(arg => !outputLocation.includes(arg) && !mapLocations.includes(arg) && !pluginsPaths.includes(arg));
+
+    if (unused.length) console.warn('unrecognized params', unused);
 
     for (const loc of mapLocations) {
         const map = new Map(loc);
