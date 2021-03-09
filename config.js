@@ -76,8 +76,9 @@ for (const file of Object.values(filesToProcess)) {
 }
 
 const quotesRegex = /"((?:\\.|[^"\\])*)"/g;
-const isMPQ = (path) => path.endsWith('.w3x') || path.endsWith('.w3m') || path.endsWith('.mpq');
-const isMap = (path) => !path.endsWith('.json') && !path.endsWith('.js') && fs.existsSync(path) && (isMPQ(path) || fs.lstatSync(path).isDirectory());
+const isMPQ = (arg) => arg.endsWith('.w3x') || arg.endsWith('.w3m') || arg.endsWith('.mpq');
+const isMap = (arg) => !arg.endsWith('.json') && !arg.endsWith('.js') && fs.existsSync(arg) && (isMPQ(arg) || fs.lstatSync(arg).isDirectory());
+const isPlugin = (arg) => arg => arg.endsWith('.js') && fs.existsSync(arg);
 
-module.exports = {filesToProcess, quotesRegex, isMPQ, isMap};
+module.exports = {filesToProcess, quotesRegex, isMPQ, isMap, isPlugin};
 
