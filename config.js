@@ -78,7 +78,7 @@ for (const file of Object.values(filesToProcess)) {
 const quotesRegex = /"((?:\\.|[^"\\])*)"/g;
 const isMPQ = (arg) => arg.endsWith('.w3x') || arg.endsWith('.w3m') || arg.endsWith('.mpq');
 const isMap = (arg) => !arg.endsWith('.json') && !arg.endsWith('.js') && fs.existsSync(arg) && (isMPQ(arg) || fs.lstatSync(arg).isDirectory());
-const isPlugin = (arg) => arg => arg.endsWith('.js') && fs.existsSync(arg);
+const isPlugin = (arg) => arg.endsWith('.js') && fs.existsSync(arg);
 
 module.exports = {filesToProcess, quotesRegex, isMPQ, isMap, isPlugin};
 
