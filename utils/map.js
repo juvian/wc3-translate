@@ -75,18 +75,18 @@ class Map {
         return str;
     }
 
-    writeWar(name, file) {
+    writeWar(name, file, outputLocation) {
         const toWar = file.toWar(this[file.name]);
 
         if (toWar.errors && toWar.errors.length) console.warn(toWar.errors);
 
-        const filePath = path.join(this.isMPQ ? path.join(path.resolve(this.folder), '..') : this.folder, "output", name);
+        const folderPath = outputLocation || path.join(this.isMPQ ? path.join(path.resolve(this.folder), '..') : this.folder, "translated");
 
-        if (!fs.existsSync(path.join(filePath, '..'))){
-            fs.mkdirSync(path.join(filePath, '..'));
+        if (!fs.existsSync(path.join(folderPath))){
+            fs.mkdirSync(path.join(folderPath));
         }
 
-        fs.writeFileSync(filePath, toWar.buffer || toWar);
+        fs.writeFileSync(path.join(folderPath, name), toWar.buffer || toWar, 'utf8');
     }
 }
 

@@ -43,4 +43,12 @@ function* mapIterator(map) {
   }
 }
 
-module.exports = {objectIterator, infoIterator, stringsIterator, mapIterator}
+function serialize(type, output) {
+  return type == "json" ? JSON.stringify(output, null, 2) : require('js-yaml').dump(output, {lineWidth: 9999999});
+}
+
+function deserialize(type, data) {
+  return type == "json" ? JSON.parse(data) : require('js-yaml').load(data);
+}
+
+module.exports = {objectIterator, infoIterator, stringsIterator, mapIterator, serialize, deserialize}

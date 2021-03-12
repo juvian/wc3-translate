@@ -1,18 +1,19 @@
 const {filesToProcess, quotesRegex, isMap} = require('./config');
 const fs = require('fs');
-const Map = require('./utils/Map');
 const path = require('path');
+const {deserialize} = require('./utils/utils');
+const Map = require('./utils/map');
 
 async function main() {
-    const file = process.argv.slice(2).find(arg => arg.endsWith('.json') && fs.existsSync(arg));
-    const mapLocation = process.argv.slice(2).find(isMap);
+    const file = process.argv.slice(2).find(arg => (arg.endsWith('.json') || arg.endsWith('.yaml')) && fs.existsSync(arg));
+    const outputLocation = process.argv.slice(2).find(arg => arg != file && fs.existsSync(arg) && fs.lstatSync(arg).isDirectory());
+    
+    const input = deserialize(path.extname(file), fs.readFileSync(file));
 
-    const input = JSON.parse(fs.readFileSync(file));
-
-    const map = new Map(mapLocation);
+    const map = new Map(input.metadata.maps[0].folder);
 
     await map.parseFiles();
-
+    let doodads = 0;
     for (const [name, file] of Object.entries(filesToProcess)) {
         if (file.props) {
             const reversedProps = Object.fromEntries(Object.entries(file.props).map(arr => [arr[1], arr[0]]));
@@ -36,14 +37,20 @@ async function main() {
 
                 for (const modification of map[file.name].custom[id]) {
                     if (currentIdx.hasOwnProperty(modification.id)) {
-                        modification.value = translations[modification.id][currentIdx[modification.id]++];
+                        const val = translations[modification.id][currentIdx[modification.id]++];
+            
+                        if (val == null) {
+                            console.warn("translation not found for ", id, modification, " using untranslated");
+                        } else {
+                            modification.value = val;
+                        }
                     }
                 }
             }
         } else if (name == "war3map.j") {
             map.script = map.script.replace(quotesRegex, (match) => {
                 const val = map.getString(match.substring(1, match.length - 1));
-                return '"' + (input.script[val]?.newTranslated || input.script[val]?.oldTranslated || val) + '"';
+                return '"' + (input.script[val]?.newTranslated || input.script[val]?.oldTranslated || val).replace(/"/g, '\\"') + '"';
             });
         } else if (name == "war3map.wts") {
             for (const key of Object.keys(map.strings)) {
@@ -63,7 +70,7 @@ async function main() {
             }
         }
 
-        map.writeWar(name, file);
+        map.writeWar(name, file, outputLocation);
     }
 }
 

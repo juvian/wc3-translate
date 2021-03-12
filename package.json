@@ -4,13 +4,14 @@
   "description": "utils for translating a wc3 map",
   "main": "index.js",
   "scripts": {
-    "toJson": "node .\\toJson.js \"..\\eden\\eden 5.8h\\korean 5.8h_un.w3x\" \"..\\eden\\eden 5.8f\\eng 5.8f_un.w3x\" \"..\\eden\\eden 5.8f\\korean 5.8f_un.w3x\" .\\data\\output.json .\\plugins\\setChanged.js .\\plugins\\setKorean.js .\\plugins\\guessTranslations.js",
-    "toWar": "node .\\toWar.js \".\\data\\newUntranslated\\korean 5.8k_un.w3x\" .\\data\\newUntranslated\\output.json"
+    "toJson": "node .\\toJson.js \"..\\eden\\eden 5.8h\\korean 5.8h_un.w3x\" \"..\\eden\\eden 5.8f\\eng 5.8f_un.w3x\" \"..\\eden\\eden 5.8f\\korean 5.8f_un.w3x\" .\\data\\output.yaml .\\plugins\\setChanged.js .\\plugins\\setKorean.js .\\plugins\\guessTranslations.js .\\plugins\\setOnlySpacingDiff.js",
+    "toWar": "node .\\toWar.js .\\data\\output.yaml .\\data"
   },
   "author": "juvian",
   "license": "ISC",
   "dependencies": {
     "@wowserhq/stormjs": "^0.4.1",
-    "wc3maptranslator": "1.1.0"
+    "js-yaml": "^4.0.0",
+    "wc3maptranslator": "file:../wc3maptranslator"
   }
 }
