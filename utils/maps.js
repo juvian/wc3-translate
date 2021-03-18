@@ -2,7 +2,6 @@ const Map = require('./map');
 const {filesToProcess, quotesRegex} = require('../config');
 const Processor = require('./processor');
 const path = require('path');
-const fs = require('fs');
 
 module.exports = class Maps {
     add(map) {

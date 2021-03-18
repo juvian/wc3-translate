@@ -1,11 +1,11 @@
-const {filesToProcess, quotesRegex, isMap} = require('./config');
+const {filesToProcess, quotesRegex, isOutput} = require('./config');
 const fs = require('fs');
 const path = require('path');
 const {deserialize} = require('./utils/utils');
 const Map = require('./utils/map');
 
 async function main() {
-    const file = process.argv.slice(2).find(arg => (arg.endsWith('.json') || arg.endsWith('.yaml')) && fs.existsSync(arg));
+    const file = process.argv.slice(2).find(isOutput);
     const outputLocation = process.argv.slice(2).find(arg => arg != file && fs.existsSync(arg) && fs.lstatSync(arg).isDirectory());
     
     const input = deserialize(path.extname(file), fs.readFileSync(file));
@@ -13,7 +13,7 @@ async function main() {
     const map = new Map(input.metadata.maps[0].folder);
 
     await map.parseFiles();
-    let doodads = 0;
+
     for (const [name, file] of Object.entries(filesToProcess)) {
         if (file.props) {
             const reversedProps = Object.fromEntries(Object.entries(file.props).map(arr => [arr[1], arr[0]]));

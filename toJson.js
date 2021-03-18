@@ -28,7 +28,7 @@ async function main() {
     const output = maps.process();
 
     for (const plugin of plugins) {
-        if (plugin.afterParse) plugin.afterParse(output);
+        if (plugin.afterParse) await plugin.afterParse(output);
     }
 
     fs.writeFileSync(outputLocation, serialize(path.extname(outputLocation), output));
