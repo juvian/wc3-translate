@@ -76,6 +76,9 @@ There may be situations where you either forgot to apply some plugin or want to 
 
 Example: `node update.js path/to/output/translations.yaml plugins/ignoreStrings.js plugins/ignorePlayers.js`
 
+# Translating a map from scratch:
+To be updated when I try it
+
 # Misc
 If you have any doubts feel free to ask in [Wc3 Translators United](https://discord.gg/QEPuPFB8jY) discord server.
 
