@@ -13,6 +13,6 @@
   "dependencies": {
     "@wowserhq/stormjs": "^0.4.1",
     "js-yaml": "^4.0.0",
-    "wc3maptranslator": "juvian/WC3MapTranslator#1.1.0"
+    "wc3maptranslator": "https://github.com/juvian/WC3MapTranslator/tarball/1.1.0"
   }
 }
