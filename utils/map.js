@@ -17,7 +17,9 @@ class Map {
         this.usedStrings = new Set();
     }
 
-    async parseFiles() {
+    async parseFiles(files) {
+        files = files || Object.keys(filesToProcess);
+
         console.log("parsing map " + this.folder);
 
         let mpq;
@@ -27,9 +29,9 @@ class Map {
             mpq = await MPQ.open('/maps/' + path.basename(this.folder), 'r');
         }
 
-        for (const file of Object.keys(filesToProcess)) {
+        for (const file of files) {
             let buffer;
-
+            
             if (mpq) {
                 if (!mpq.hasFile(file) && file == "war3map.j" && mpq.hasFile('scrips/war3map.j')) file = 'scrips/war3map.j';
                 if (mpq.hasFile(file)) {
