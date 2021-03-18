@@ -50,6 +50,10 @@ The paths to maps do not need to be mpqs, it is possible that my tool won't be a
 
 Most files follow the same format, except for script, strings and map info. Strings from wts file are just replaced where they were referenced (unit will say Crusader instead of TRIGSTR_12784) and then not repeated on the strings part of output file. This means the remaining things in strings in theory are not used anywhere (if you processed all map files) so there is no need to translate those. It is hard to match strings used in script with their corresponding translation, an algorithm is used to estimate this. It is possible you will have to retranslate things you already had, but this should happen rarely. Let me know if it does
 
+![Yaml format](images/yaml_format.png)
+
+![Json format](images/json_format.png)
+
 # toWar
 `node toWar.js output.yaml outputFolder`
 
