@@ -5,6 +5,9 @@ const { FS, MPQ } = require('@wowserhq/stormjs');
 
 FS.mkdir('/maps');
 
+process.removeAllListeners('uncaughtException') // stormlib hides error stack
+process.removeAllListeners('unhandledRejection') // stormlib hides error stack
+
 class Map {
     constructor(folder) {   
         this.folder = folder;
@@ -19,7 +22,7 @@ class Map {
 
     async parseFiles(files) {
         if (!this.folder) return;
-        
+
         files = files || Object.keys(filesToProcess);
 
         console.log("parsing map " + this.folder);
