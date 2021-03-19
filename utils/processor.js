@@ -28,7 +28,7 @@ module.exports = class Processor {
         for (const [idx, data] of Object.entries(this.data)) {
             if (data.hasOwnProperty(id) && data[id].hasOwnProperty(prop)) {
                 for (const [level, modification] of Object.entries(data[id][prop])) {
-                    if (modification.value) {
+                    if (modification.value != null) {
                         let val = this.maps[idx].getString(modification.value);
                         
                         if (name) {
