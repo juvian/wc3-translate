@@ -4,6 +4,7 @@ const Processor = require('./processor');
 const path = require('path');
 
 module.exports = class Maps {
+
     add(map) {
         if (this.newUntranslated == undefined) this.newUntranslated = map;
         else if (this.oldTranslated == undefined) this.oldTranslated = map;
@@ -12,12 +13,13 @@ module.exports = class Maps {
     }
 
     process() {
+        this.oldTranslated = this.oldTranslated || new Map();
+        this.oldUntranslated = this.oldUntranslated || new Map();
         const output = {};
+        
         this.maps = [this.newUntranslated, this.oldTranslated, this.oldUntranslated];
         this.maps.forEach((m, idx) => m.name = ["newUntranslated", "oldTranslated", "oldUntranslated"][idx]);
 
-        this.oldTranslated = this.oldTranslated || new Map();
-        this.oldUntranslated = this.oldUntranslated || new Map();
         
         for (const file of Object.values(filesToProcess)) {
             if (this.newUntranslated.hasOwnProperty(file.name) && file.props) {
@@ -54,8 +56,6 @@ module.exports = class Maps {
         const result = {players: [], forces: []};
 
         for (const map of this.maps) {
-            const isLast = map == this.maps[this.maps.length - 1];
-
             for (const prop of ["name", "author", "description", "recommendedPlayers"]) {
                 result[prop] = result[prop] || {};
                 result[prop][map.name] = map.getString(map.info.map[prop]);
@@ -95,7 +95,9 @@ module.exports = class Maps {
         const newStrings = {};
         let idx = 0;
 
-        this.maps.forEach(m => m.script = m.script.split('\n').filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')))
+        this.maps.forEach(m => m.script = m.script.split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')))
+
+        console.log("processing scripts", this.maps.map(m => m.script.length))
 
         for (let j = 0; j < this.oldUntranslated.script.length; j++) {
             for (let i = idx; i < Math.min(this.oldTranslated.script.length, idx + 5000); i++) {

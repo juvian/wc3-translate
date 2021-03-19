@@ -1,9 +1,11 @@
-const {filesToProcess, quotesRegex, isMap, isPlugin} = require('./config');
+const {isMap, isPlugin} = require('./config');
 const Map = require('./utils/map');
 const path = require('path');
 const Maps = require('./utils/maps');
 const {serialize} = require('./utils/utils');
 const fs = require('fs');
+
+process.removeAllListeners('uncaughtException') // stormlib hides error stack
 
 async function main() {
     const maps = new Maps();
@@ -26,7 +28,6 @@ async function main() {
     }
 
     const output = maps.process();
-
     for (const plugin of plugins) {
         if (plugin.afterParse) await plugin.afterParse(output);
     }

@@ -6,9 +6,9 @@ const { FS, MPQ } = require('@wowserhq/stormjs');
 FS.mkdir('/maps');
 
 class Map {
-    constructor(folder) {   
+    constructor(folder = '') {   
         this.folder = folder;
-        this.isMPQ = isMPQ(folder);
+        this.isMPQ = folder && isMPQ(folder);
 
         for (const info of Object.values(filesToProcess)) {
             this[info.name] = info.empty;

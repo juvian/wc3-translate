@@ -35,7 +35,7 @@ module.exports = class Processor {
                             this.results[id] = this.results[id] || {};
                             this.results[id][name] = this.results[id][name] || [];
                             this.results[id][name][level] = this.results[id][name][level] || {};
-                            this.results[id][name][level][this.maps[idx].name] = val ? val.replaceAll('\r\n', '\n') : val;
+                            this.results[id][name][level][this.maps[idx].name] = val ? val.replace(/\r\n/g, '\n') : val;
                         }
                     }
                 }
