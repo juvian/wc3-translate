@@ -1,7 +1,7 @@
 const {mapIterator} = require('../utils/utils');
 
 const afterParse = (output) => {
-    for (const {id, data} of mapIterator(output)) {
+    for (const {data} of mapIterator(output)) {
         if (data.changed && !data.newTranslated && data.oldUntranslated != null) {
             //only numbers changed or tooltip color changed?
             const regex = /(\\|cff[0-9A-Fa-f]{6}|\d+\.?\d*)/gi
