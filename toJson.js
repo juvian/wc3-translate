@@ -5,8 +5,6 @@ const Maps = require('./utils/maps');
 const {serialize} = require('./utils/utils');
 const fs = require('fs');
 
-process.removeAllListeners('uncaughtException') // stormlib hides error stack
-
 async function main() {
     const maps = new Maps();
     const outputLocation = process.argv.slice(2).find(arg => arg.endsWith('.json')) || process.argv.slice(2).find(arg => arg.endsWith('.yaml'));

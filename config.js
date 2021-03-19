@@ -1,5 +1,6 @@
 const Translator = require('wc3maptranslator');
 const fs = require('fs');
+const interface = require('./utils/gameInterface');
 
 const toEntries = (data) => {
     for (const key of Object.keys(data.custom)) {
@@ -63,7 +64,15 @@ const filesToProcess = {
         toJson: (b) => b.toString(),
         toWar: (b) => b,
         afterParse: false,
-        empty: {}
+        empty: ""
+    },
+    "war3mapSkin.txt": {
+        name: "interface",
+        toJson: interface.toJson,
+        toWar: interface.toWar,
+        afterParse: false,
+        empty: {},
+        ignore: ["Terrain", "WorldEditMisc", "WorldEditStrings", "CustomSkin"]
     }
 }
 

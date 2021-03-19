@@ -21,19 +21,19 @@ module.exports = class Maps {
         this.maps = [this.newUntranslated, this.oldTranslated, this.oldUntranslated];
         this.maps.forEach((m, idx) => m.name = ["newUntranslated", "oldTranslated", "oldUntranslated"][idx]);
 
-        
         for (const file of Object.values(filesToProcess)) {
             if (this.newUntranslated.hasOwnProperty(file.name) && file.props) {
-                output[file.name] =  new Processor(this.maps.map(m => m[file.name].custom), this.maps, file.props, file.ignore).process();
+                output[file.name] = new Processor(this.maps.map(m => m[file.name].custom), this.maps, file.props, file.ignore).process();
             }
         } 
 
         output.info = this.processInfo();
         output.script = this.processScript();
         output.strings = this.processStrings();
+        output.interface = this.processInterface();
 
         output.metadata = {
-            maps: this.maps.map(m => ({folder: path.resolve(m.folder)}))
+            maps: this.maps.map(m => ({folder: m.folder == null ? null : path.resolve(m.folder)}))
         }
 
         return output;
@@ -57,6 +57,8 @@ module.exports = class Maps {
         const result = {players: [], forces: []};
 
         for (const map of this.maps) {
+            if (!map.info.players) continue;
+
             for (const prop of ["name", "author", "description", "recommendedPlayers"]) {
                 result[prop] = result[prop] || {};
                 result[prop][map.name] = map.getString(map.info.map[prop]);
@@ -70,6 +72,26 @@ module.exports = class Maps {
             for (const [idx, force] of Object.entries(map.info.forces)) {
                 result.forces[idx] = result.forces[idx] || {name: {}};
                 result.forces[idx].name[map.name] = map.getString(force.name);                
+            }
+        }
+
+        return result;
+    }
+
+    processInterface() {
+        const result = {};
+
+        for (const map of this.maps) {
+            for (const [key, obj] of Object.entries(map.interface)) {
+                for (const [prop, str] of Object.entries(obj)) {
+                    const val = map.getString(str);
+
+                    if (val && !filesToProcess["war3mapSkin.txt"].ignore.includes(key)) {
+                        result[key] = result[key] || {};
+                        result[key][prop] = result[key][prop] || {};
+                        result[key][prop][map.name] = val;
+                    }
+                }
             }
         }
 

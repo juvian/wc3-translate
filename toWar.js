@@ -1,7 +1,7 @@
 const {filesToProcess, quotesRegex, isOutput} = require('./config');
 const fs = require('fs');
 const path = require('path');
-const {deserialize} = require('./utils/utils');
+const {deserialize, interfaceIterator} = require('./utils/utils');
 const Map = require('./utils/map');
 
 async function main() {
@@ -38,7 +38,7 @@ async function main() {
                 for (const modification of map[file.name].custom[id]) {
                     if (currentIdx.hasOwnProperty(modification.id)) {
                         const val = translations[modification.id][currentIdx[modification.id]++];
-            
+                        
                         if (val == null) {
                             console.warn("translation not found for ", id, modification, " using untranslated");
                         } else {
@@ -67,6 +67,11 @@ async function main() {
 
             for (const [idx, force] of Object.entries(map.info.forces)) {
                 force.name = input.info.forces[idx].name.newTranslated || input.info.forces[idx].name.oldTranslated || force.name;
+            }
+        } else if (name == "war3mapSkin.txt") {
+            for (const {id, parentId, data} of interfaceIterator(input[file.name])) {
+                const val = data?.newTranslated || data?.oldTranslated;
+                map[file.name][parentId][id] = val || map[file.name][parentId][id] ;
             }
         }
 

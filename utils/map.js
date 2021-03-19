@@ -6,7 +6,7 @@ const { FS, MPQ } = require('@wowserhq/stormjs');
 FS.mkdir('/maps');
 
 class Map {
-    constructor(folder = '') {   
+    constructor(folder) {   
         this.folder = folder;
         this.isMPQ = folder && isMPQ(folder);
 
@@ -18,6 +18,8 @@ class Map {
     }
 
     async parseFiles(files) {
+        if (!this.folder) return;
+        
         files = files || Object.keys(filesToProcess);
 
         console.log("parsing map " + this.folder);
