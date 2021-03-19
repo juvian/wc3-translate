@@ -2,6 +2,7 @@ const Map = require('./map');
 const {filesToProcess, quotesRegex} = require('../config');
 const Processor = require('./processor');
 const path = require('path');
+const {replaceHex} = require('../utils/utils');
 
 module.exports = class Maps {
 
@@ -94,13 +95,16 @@ module.exports = class Maps {
         const strings = {};
         const newStrings = {};
         let idx = 0;
+        let slow = 0;
 
-        this.maps.forEach(m => m.script = m.script.split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')))
+        this.maps.forEach(m => m.script = m.script.split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(replaceHex))
 
         console.log("processing scripts", this.maps.map(m => m.script.length))
 
-        for (let j = 0; j < this.oldUntranslated.script.length; j++) {
+        for (let j = 0; j < 50; j++) {
             for (let i = idx; i < Math.min(this.oldTranslated.script.length, idx + 5000); i++) {
+                if (i - idx > 1000 && slow++ < 20) console.warn('slow matching on line ', this.oldUntranslated.script[j]);
+
                 if (this.isSameLine(this.oldUntranslated.script[j], this.oldTranslated.script[i])) {
                     idx = i + 1;
 

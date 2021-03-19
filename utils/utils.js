@@ -51,4 +51,8 @@ function deserialize(type, data) {
   return type == "json" ? JSON.parse(data) : require('js-yaml').load(data);
 }
 
-module.exports = {objectIterator, infoIterator, stringsIterator, mapIterator, serialize, deserialize}
+const replaceHex = (line) => line.replace(/\$[0-9A-F]+/gi, function(m) {
+  return parseInt(m.slice(1), 16);
+});
+
+module.exports = {objectIterator, infoIterator, stringsIterator, mapIterator, serialize, deserialize, replaceHex}
