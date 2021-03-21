@@ -1,7 +1,7 @@
 const Map = require('../utils/map');
 
 const afterParse = async (output) => {
-    const map = new Map(output.metadata.maps[0].folder);
+    const map = new Map(output.metadata.maps[0].location);
     await map.parseFiles(['war3map.j']);
     const code = map.script;
 

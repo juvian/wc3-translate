@@ -5,7 +5,6 @@ const afterParse = (output) => {
         //new string (or old unmatched from string)
         if ((data.hasOwnProperty("newUntranslated") && data.hasOwnProperty("oldUntranslated") && data.newUntranslated != data.oldUntranslated) || !data.oldTranslated) { 
             data.changed = true;
-            data.newTranslated = data.newTranslated || "";
         }
     }
 }

@@ -33,7 +33,7 @@ module.exports = class Maps {
         output.interface = this.processInterface();
 
         output.metadata = {
-            maps: this.maps.map(m => ({folder: m.folder == null ? null : path.resolve(m.folder)}))
+            maps: this.maps.map(m => ({location: m.location == null ? null : path.resolve(m.location)}))
         }
 
         return output;

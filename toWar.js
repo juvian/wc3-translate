@@ -11,7 +11,7 @@ async function main() {
     const outputLocation = args.find(a => a.type == 'folder')?.arg;
 
     const input = deserialize(path.extname(inputLocation), fs.readFileSync(inputLocation));
-    const map = new Map((await parseArgs([input.metadata.maps[0].folder]))[0]);
+    const map = new Map(input.metadata.maps[0].location);
 
     await map.parseFiles();
 

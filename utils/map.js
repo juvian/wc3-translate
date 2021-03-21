@@ -2,6 +2,7 @@ const {filesToProcess} = require('../config');
 const path = require('path');
 const fs = require('fs');
 const { FS, MPQ } = require('@wowserhq/stormjs');
+const {isMPQ} = require('./argParser');
 
 FS.mkdir('/maps');
 
@@ -9,9 +10,9 @@ process.removeAllListeners('uncaughtException') // stormlib hides error stack
 process.removeAllListeners('unhandledRejection') // stormlib hides error stack
 
 class Map {
-    constructor(arg) {   
-        this.folder = arg ? arg.arg : '';
-        this.isMPQ = arg && arg.type == 'mpq';
+    constructor(loc) {   
+        this.location = loc || "";
+        this.isMPQ = loc && isMPQ(loc);
 
         for (const info of Object.values(filesToProcess)) {
             this[info.name] = info.empty;
@@ -21,17 +22,17 @@ class Map {
     }
 
     async parseFiles(files) {
-        if (!this.folder) return;
+        if (!this.location) return;
 
         files = files || Object.keys(filesToProcess);
 
-        console.log("parsing map " + this.folder);
+        console.log("parsing map " + this.location);
 
         let mpq;
 
         if (this.isMPQ) {
-            FS.mount(FS.filesystems.NODEFS, { root: path.join(path.resolve(this.folder), '..') }, '/maps');
-            mpq = await MPQ.open('/maps/' + path.basename(this.folder), 'r');
+            FS.mount(FS.filesystems.NODEFS, { root: path.join(path.resolve(this.location), '..') }, '/maps');
+            mpq = await MPQ.open('/maps/' + path.basename(this.location), 'r');
         }
 
         for (const file of files) {
@@ -45,7 +46,7 @@ class Map {
                     f.close();
                 }
             } else {
-                buffer = fs.existsSync(path.join(this.folder, file)) ? fs.readFileSync(path.join(this.folder, file)) : null;
+                buffer = fs.existsSync(path.join(this.location, file)) ? fs.readFileSync(path.join(this.location, file)) : null;
             }
             
             if(buffer) this.parseFile(buffer, filesToProcess[file]);
@@ -87,7 +88,7 @@ class Map {
 
         if (toWar.errors && toWar.errors.length) console.warn(toWar.errors);
 
-        const folderPath = outputLocation || path.join(this.isMPQ ? path.join(path.resolve(this.folder), '..') : this.folder, "translated");
+        const folderPath = outputLocation || path.join(this.isMPQ ? path.join(path.resolve(this.location), '..') : this.location, "translated");
 
         if (!fs.existsSync(path.join(folderPath))){
             fs.mkdirSync(path.join(folderPath));
