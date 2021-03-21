@@ -17,6 +17,8 @@ function* stringsIterator(strings, type) {
 }
 
 function* infoIterator(info) {
+  if (info == null || Object.keys(info).length == 0) return;
+  
   for (const id of ["name", "author", "description", "recommendedPlayers"]) {
     yield {data: info[id], id, type: "info"};
   }
@@ -35,7 +37,7 @@ function* infoIterator(info) {
 }
 
 function* interfaceIterator(interface) {
-  for (const [parentId, obj] of Object.entries(interface)) {
+  for (const [parentId, obj] of Object.entries(interface || {})) {
     for (const [id, data] of Object.entries(obj)) {
       yield {data, id, type: "interface", parent: obj, parentId};
     }

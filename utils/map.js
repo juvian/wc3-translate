@@ -1,4 +1,4 @@
-const {filesToProcess, isMPQ} = require('../config');
+const {filesToProcess} = require('../config');
 const path = require('path');
 const fs = require('fs');
 const { FS, MPQ } = require('@wowserhq/stormjs');
@@ -9,9 +9,9 @@ process.removeAllListeners('uncaughtException') // stormlib hides error stack
 process.removeAllListeners('unhandledRejection') // stormlib hides error stack
 
 class Map {
-    constructor(folder) {   
-        this.folder = folder;
-        this.isMPQ = folder && isMPQ(folder);
+    constructor(arg) {   
+        this.folder = arg ? arg.arg : '';
+        this.isMPQ = arg && arg.type == 'mpq';
 
         for (const info of Object.values(filesToProcess)) {
             this[info.name] = info.empty;

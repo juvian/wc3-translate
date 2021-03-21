@@ -1,16 +1,17 @@
-const {filesToProcess, quotesRegex, isOutput} = require('./config');
+const {filesToProcess, quotesRegex} = require('./config');
 const fs = require('fs');
 const path = require('path');
 const {deserialize, interfaceIterator} = require('./utils/utils');
 const Map = require('./utils/map');
+const {parseArgs} = require('./utils/argParser');
 
 async function main() {
-    const file = process.argv.slice(2).find(isOutput);
-    const outputLocation = process.argv.slice(2).find(arg => arg != file && fs.existsSync(arg) && fs.lstatSync(arg).isDirectory());
-    
-    const input = deserialize(path.extname(file), fs.readFileSync(file));
+    const args = await parseArgs(process.argv.slice(2));
+    const inputLocation = args.find(a => a.type == 'output').arg;
+    const outputLocation = args.find(a => a.type == 'folder')?.arg;
 
-    const map = new Map(input.metadata.maps[0].folder);
+    const input = deserialize(path.extname(inputLocation), fs.readFileSync(inputLocation));
+    const map = new Map((await parseArgs([input.metadata.maps[0].folder]))[0]);
 
     await map.parseFiles();
 
@@ -39,9 +40,7 @@ async function main() {
                     if (currentIdx.hasOwnProperty(modification.id)) {
                         const val = translations[modification.id][currentIdx[modification.id]++];
                         
-                        if (val == null) {
-                            console.warn("translation not found for ", id, modification, " using untranslated");
-                        } else {
+                        if (val != null) {
                             modification.value = val;
                         }
                     }

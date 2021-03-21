@@ -1,23 +1,19 @@
-const {isMap, isPlugin} = require('./config');
 const Map = require('./utils/map');
 const path = require('path');
 const Maps = require('./utils/maps');
 const {serialize} = require('./utils/utils');
 const fs = require('fs');
+const {parseArgs} = require('./utils/argParser');
 
 async function main() {
     const maps = new Maps();
-    const outputLocation = process.argv.slice(2).find(arg => arg.endsWith('.json')) || process.argv.slice(2).find(arg => arg.endsWith('.yaml'));
-    const mapLocations = process.argv.slice(2).filter(isMap);
-    const pluginsPaths = process.argv.slice(2).filter(isPlugin);
+    const args = await parseArgs(process.argv.slice(2));
+    const outputLocation = args.find(a => a.type == 'output').arg;
+    const mapLocations = args.filter(a => a.type == 'folder' || a.type == 'mpq');
+    const plugins = args.filter(a => a.type == 'plugin');
 
-    const plugins = pluginsPaths.map(p => require(path.resolve(p)));
-    const unused = process.argv.slice(2).filter(arg => !outputLocation.includes(arg) && !mapLocations.includes(arg) && !pluginsPaths.includes(arg));
-
-    if (unused.length) console.warn('unrecognized params', unused);
-
-    for (const loc of mapLocations) {
-        const map = new Map(loc);
+    for (const arg of mapLocations) {
+        const map = new Map(arg);
 
         await map.parseFiles();
         map.afterParseFiles();
@@ -26,8 +22,9 @@ async function main() {
     }
 
     const output = maps.process();
+
     for (const plugin of plugins) {
-        if (plugin.afterParse) await plugin.afterParse(output);
+        if (plugin.module.afterParse) await plugin.module.afterParse(output);
     }
 
     fs.writeFileSync(outputLocation, serialize(path.extname(outputLocation), output));
