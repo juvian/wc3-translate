@@ -144,7 +144,7 @@ module.exports = class Maps {
 
         for (const line of this.newUntranslated.script) {
             for (const match of this.getMatches(line, this.newUntranslated, true)) {
-                newStrings[match] = newStrings[match] || {};
+                newStrings[match] = newStrings[match] || {newUntranslated: match};
                 if (strings[match]) newStrings[match].oldTranslated = strings[match];
             }
         }

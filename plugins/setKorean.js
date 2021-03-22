@@ -1,8 +1,10 @@
 const {mapIterator} = require('../utils/utils');
+const {koreanRegex} = require('../utils/tokenizer');
 
 const afterParse = (output) => {
     for (const {data} of mapIterator(output)) {
-        if (data.oldTranslated && data.oldTranslated.match(/[\u3131-\uea60]/)) {
+        const val = data.newTranslated || data.oldTranslated;
+        if (val && val.match(koreanRegex)) {
             data.korean = true;
         }
     }
