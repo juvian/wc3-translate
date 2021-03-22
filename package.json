@@ -4,8 +4,9 @@
   "description": "utils for translating a wc3 map",
   "main": "index.js",
   "scripts": {
-    "toJson": "node .\\toJson.js \"..\\eden\\eden 5.8h\\korean 5.8h_un.w3x\" \"..\\eden\\eden 5.8f\\eng 5.8f_un.w3x\" \"..\\eden\\eden 5.8f\\korean 5.8f_un.w3x\" .\\data\\output.yaml .\\plugins\\ignorePlayers.js .\\plugins\\ignoreStrings.js .\\plugins\\setChanged.js .\\plugins\\setKorean.js .\\plugins\\guessTranslations.js .\\plugins\\setOnlySpacingDiff.js",
-    "toWar": "node .\\toWar.js .\\data\\output.yaml .\\data"
+    "toJson": "node .\\toJson.js \"..\\eden\\eden 5.8h\\korean 5.8h_un.w3x\" \"..\\eden\\eden 5.8f\\eng 5.8f_un.w3x\" \"..\\eden\\eden 5.8f\\korean 5.8f_un.w3x\" .\\data\\output.yaml .\\plugins\\ignorePlayers.js .\\plugins\\ignoreStrings.js .\\plugins\\setChanged.js .\\plugins\\setKorean.js .\\plugins\\guessTranslations.js .\\plugins\\setOnlySpacingDiff.js .\\plugins\\setUntranslated.js .\\plugins\\exportTokens.js .\\data\\tokens.txt .\\plugins\\koreanExportToken",
+    "toWar": "node .\\toWar.js .\\data\\output.yaml .\\data",
+    "update": "node .\\update.js .\\data\\output.yaml .\\plugins\\importTokens.js .\\data\\tokens.txt .\\data\\translated_tokens.txt .\\plugins\\koreanExportToken .\\plugins\\setUntranslated.js"
   },
   "author": "juvian",
   "repository": "github:juvian/wc3-translate",
