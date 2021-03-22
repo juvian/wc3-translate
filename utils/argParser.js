@@ -12,11 +12,13 @@ const parseArgs = async (args) => {
         if (isOutput(arg)) current.push({arg, type: 'output'});
         else if (isPlugin(arg)) {
             current = [];
-            const module = require(path.resolve(arg))
-            if (module.init) await module.init(plugin);
-            result.push({arg, type: 'plugin', args: current, module});
+            result.push({arg, type: 'plugin', args: current, module: require(path.resolve(arg))});
         } else if (isMPQ(arg)) current.push({arg, type: 'mpq'});
         else current.push({arg, type: 'folder'});
+    }
+
+    for (const plugin of result.filter(a => a.type == 'plugin')) {
+        if (plugin.module.init) await plugin.module.init(plugin);
     }
 
     return result;
