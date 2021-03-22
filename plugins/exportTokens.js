@@ -17,13 +17,13 @@ const processTokens = (tokens) => {
     let numbers = 0;
     return tokens.map(t => {
         if (t.hasOwnProperty('string')) {
-            if (t.string.includes('\n')) numbers = 0;
+            if (t.string.includes('\n') || t.string.includes('\r')) numbers = 0;
             return t.string;
         }
         if (isColorCode(t.token) || t.token.toLowerCase() == '|r') return '|||';
         if (isNumber(t.token)) return (10 + numbers++).toString();
         return t.token; 
-    }).join('').split('\n');
+    }).join('').split(/[\r\n]/);
 } 
 
 const afterParse = (output) => {

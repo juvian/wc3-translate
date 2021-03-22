@@ -33,13 +33,19 @@ const afterParse = (output) => {
         if (shouldTranslate) {
             const tokens = tokenize(data.newUntranslated);
             const strs = processTokens(tokens);
-            const numbers = tokens.filter(t => t.hasOwnProperty('token') && isNumber(t.token));
+            const numbers = tokens.filter(t => t.hasOwnProperty('token') && isNumber(t.token)).map(c => c.token);
             const colors = tokens.filter(t => t.hasOwnProperty('token') && (isColorCode(t.token) || t.token.toLowerCase() == '|r')).map(c => c.token);
-            let colorsIdx = 0;
+            let colorsIdx = 0, numbersIdx = 0;
 
             data.newTranslated = strs.map(s => {
-                const text = translations[s] || s;
-                return extraPlugins.every(p => p.module.shouldTranslateString(s)) ? text.replace(/\d+\.?\d*/g, (num) => numbers[parseInt(num) - 10]) : s;
+                let text = translations[s] || s;
+                let counter = 0;
+                text = text.replace(/\d+\.?\d*/g, (num) => {
+                    counter++;
+                    return numbers[parseInt(num) - 10 + numbersIdx];
+                });
+                numbersIdx += counter;
+                return text.replace(/[\r\n]+/, '');
             }).join('\n').replace(/\|\|\|/g, _ => colors[colorsIdx++]);
         }
     }

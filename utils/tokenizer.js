@@ -1,9 +1,9 @@
 const isColorCode = (token) => {
-    return token.match(/\|cff[0-9a-f]{6}/) != null;
+    return token.match(/\|cff[0-9a-f]{6}/i) != null;
 }
 
 const isNumber = (token) => {
-    return token.match(/\d+\.?\d*/) != null;
+    return token.match(/^\d+\.?\d*$/) != null;
 }
 
 const tokenize = (string) => {
