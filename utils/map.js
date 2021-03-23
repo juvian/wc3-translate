@@ -39,9 +39,9 @@ class Map {
             let buffer;
             
             if (mpq) {
-                if (!mpq.hasFile(file) && file == "war3map.j" && mpq.hasFile('scrips/war3map.j')) file = 'scrips/war3map.j';
-                if (mpq.hasFile(file)) {
-                    const f = mpq.openFile(file);
+                let toOpen = !mpq.hasFile(file) && file == "war3map.j" && mpq.hasFile('scripts\\war3map.j') ? 'scripts\\war3map.j' : file;
+                if (mpq.hasFile(toOpen)) {
+                    const f = mpq.openFile(toOpen);
                     buffer = Buffer.from(f.read());
                     f.close();
                 }
