@@ -119,7 +119,7 @@ module.exports = class Maps {
         let idx = 0;
         let slow = 0;
 
-        this.maps.forEach(m => m.script = m.script.split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(replaceHex))
+        this.maps.forEach(m => m.script = m.script.replace(quotesRegex, (str) => str.replaceAll(/[\r\n]/g, '\\n')).split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(str => replaceHex(str).replaceAll(/\\n/g, '\n')));
 
         console.log("processing scripts", this.maps.map(m => m.script.length))
 
