@@ -1,5 +1,5 @@
 const isColorCode = (token) => {
-    return token.match(/\|cff[0-9a-f]{6}/i) != null;
+    return token.match(/\|c[0-9a-f]{8}/i) != null;
 }
 
 const isNumber = (token) => {
@@ -10,7 +10,7 @@ const tokenize = (string) => {
     let result = [];
 
     while (string.length) {
-        const token = string.match(/\|cff[0-9a-f]{6}|\d+\.?\d*|\[|\]|\(|\)|\|r/i);
+        const token = string.match(/\|c[0-9a-f]{8}|\d+\.?\d*|\[|\]|\(|\)|\|r/i);
         if (token != null) {
             if (token.index > 0) result.push({string: string.substring(0, token.index)});
             string = string.substring(token.index + token[0].length);

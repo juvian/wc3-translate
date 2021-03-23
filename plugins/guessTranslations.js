@@ -4,7 +4,7 @@ const afterParse = (output) => {
     for (const {data} of mapIterator(output)) {
         if (data.changed && !data.newTranslated && data.oldUntranslated != null) {
             //only numbers changed or tooltip color changed?
-            const regex = /(\|cff[0-9A-Fa-f]{6}|\d+\.?\d*)/gi
+            const regex = /(\|c[0-9A-Fa-f]{8}|\d+\.?\d*)/gi
             if (data.newUntranslated.replace(regex) == data.oldUntranslated.replace(regex)) {
                 const n1 = data.newUntranslated.match(regex) || [];
                 const n2 = data.oldUntranslated.match(regex) || [];
