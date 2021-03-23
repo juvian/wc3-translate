@@ -23,7 +23,7 @@ const processTokens = (tokens) => {
         if (isColorCode(t.token) || t.token.toLowerCase() == '|r') return '|||';
         if (isNumber(t.token)) return (10 + numbers++).toString();
         return t.token; 
-    }).join('').split(/[\r\n]/);
+    }).join('').split(/[\r\n]/).map(a => a.replace(/\|\|\|/g, '\\n'));
 } 
 
 const afterParse = (output) => {
@@ -32,10 +32,14 @@ const afterParse = (output) => {
     for (const {data} of mapIterator(output)) {
         const shouldTranslate = extraPlugins.every(p => !p.module.shouldTranslateData || p.module.shouldTranslateData(data));
         if (shouldTranslate) {
-            const tokens = tokenize(data.newUntranslated);
-            const strs = processTokens(tokens).filter(s => extraPlugins.every(p => p.module.shouldTranslateString(s)));
-            strs.forEach(s => strings.add(s));
-        }
+            if (data.hasOwnProperty('importFails') == false) {
+                const tokens = tokenize(data.newUntranslated);
+                const strs = processTokens(tokens).filter(s => extraPlugins.every(p => p.module.shouldTranslateString(s)));
+                strs.forEach(s => strings.add(s));
+            } else if (data.importFails == 1) { // we already tried tokenizing and it failed, just give full text
+                if (extraPlugins.every(p => p.module.shouldTranslateString(data.newUntranslated))) strings.add(data.newUntranslated);
+            }
+        } 
     }
 
     fs.writeFileSync(outputLocation, Array.from(strings).join('\n'));

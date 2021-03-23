@@ -27,7 +27,7 @@ const afterParse = (output) => {
     for (let i = 0; i < translatedTokens.length; i++) {
         translations[untranslatedTokens[i]] = translatedTokens[i];
     }
-    
+
     for (const {data} of mapIterator(output)) {
         const shouldTranslate = extraPlugins.every(p => !p.module.shouldTranslateData || p.module.shouldTranslateData(data));
         if (shouldTranslate) {
@@ -36,17 +36,36 @@ const afterParse = (output) => {
             const numbers = tokens.filter(t => t.hasOwnProperty('token') && isNumber(t.token)).map(c => c.token);
             const colors = tokens.filter(t => t.hasOwnProperty('token') && (isColorCode(t.token) || t.token.toLowerCase() == '|r')).map(c => c.token);
             let colorsIdx = 0, numbersIdx = 0;
+            let inconsistent = false;
+            let translated = [];
 
-            data.newTranslated = strs.map(s => {
-                let text = translations[s] || s;
+            for (const s of strs) {
+                let t = s;
+                if (translations.hasOwnProperty(s)) {
+                    t = translations[s];
+                    inconsistent = (s.match(/[1-9]\d?/g) || []).sort().join('-') != (t.match(/[1-9]\d?/g) || []).sort().join('-') ||
+                            (s.match(/\\n/g) || []).length != (t.match(/\\n/g) || []).length;
+                    if (inconsistent) break;
+                }
+
                 let counter = 0;
-                text = text.replace(/\d+\.?\d*/g, (num) => {
+
+                t = t.replace(/[1-9]\d?/g, (num) => {
                     counter++;
                     return numbers[parseInt(num) - 10 + numbersIdx];
-                });
+                }).replace(/\\n/g, _ => colors[colorsIdx++]);
+
                 numbersIdx += counter;
-                return text.replace(/[\r\n]+/, '');
-            }).join('\n').replace(/\|\|\|/g, _ => colors[colorsIdx++]);
+
+                translated.push(t.replace(/[\r\n]+/, ''));
+            }
+
+            if (inconsistent) {
+                data.importFails = (data.importFails || 0) + 1;
+            } else {
+                data.newTranslated = translated.join('\n');
+                data.importedTokens = true;
+            }
         }
     }
 }
