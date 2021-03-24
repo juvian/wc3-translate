@@ -104,7 +104,7 @@ module.exports = class Maps {
 
     getMatches(line, map) {
         return(line.match(quotesRegex) || []).map(l => l.substring(1, l.length - 1)).map(s => map.getString(s))
-            .filter(l => !l.endsWith('.mp3') && !l.endsWith('.wav') && !l.endsWith('.mdl') && !l.endsWith('.mdx') && l.trim());
+            .filter(l => !l.endsWith('.mp3') && !l.endsWith('.wav') && !l.endsWith('.mdl') && !l.endsWith('.mdx') && !l.endsWith('.blp') && l.trim());
     }
 
     //this is hard, as we don't have a 1 to 1 match like in object files. New file can have new strings so can't even guess its the same amount of string
@@ -119,7 +119,7 @@ module.exports = class Maps {
         let idx = 0;
         let slow = 0;
 
-        this.maps.forEach(m => m.script = m.script.replace(quotesRegex, (str) => str.replaceAll(/[\r\n]/g, '\\n')).split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(str => replaceHex(str).replaceAll(/\\n/g, '\n')));
+        this.maps.forEach(m => m.script = m.script.replace(quotesRegex, (str) => str.replaceAll(/[\r\n]/g, '??|??||??')).split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(str => replaceHex(str).replaceAll('??|??||??', '\n')));
 
         console.log("processing scripts", this.maps.map(m => m.script.length))
 
@@ -134,7 +134,7 @@ module.exports = class Maps {
                     const s2 = this.getMatches(this.oldTranslated.script[i], this.oldTranslated);
         
                     for (let k = 0; k < Math.min(s1.length, s2.length); k++) {
-                        strings[s1[k]] = s2[k];
+                        strings[s1[k]] = s2[k].replaceAll('\\n', '\n');
                     }
 
                     break;
@@ -144,7 +144,7 @@ module.exports = class Maps {
 
         for (const line of this.newUntranslated.script) {
             for (const match of this.getMatches(line, this.newUntranslated, true)) {
-                newStrings[match] = newStrings[match] || {newUntranslated: match};
+                newStrings[match] = newStrings[match] || {newUntranslated: match.replaceAll('\\n', '\n')};
                 if (strings[match]) newStrings[match].oldTranslated = strings[match];
             }
         }
