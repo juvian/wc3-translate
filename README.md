@@ -92,7 +92,7 @@ One option is to run `node toJson.js map1 output.yaml` and translate everything.
 8. Put translated files in map (always better to work with a copied map in case you need to reuse/recover original).
 
 ## Another option
-I haven't tried it much but [this website](https://exquisite.mkdir.no/mpq/translator) has a simple interface to translate maps from scrath, so you can try it too.
+I haven't tried it much but [this website](https://exquisite.mkdir.no/mpq/translator) has a simple interface to translate maps from scratch with a few clicks, so you can try it too.
 
 # Misc
 If you have any doubts feel free to ask in [Wc3 Translators United](https://discord.gg/QEPuPFB8jY) discord server.
