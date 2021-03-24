@@ -28,6 +28,10 @@ There is also a plugins system, which would allow you to extend the functionalit
 4. setOnlySpacingDiff: this plugin checks if the only thing that changed between old and new korean are just spaces, in which case it adds a onlySpacingDiff property to those (useful to know at a quick glance that nothing changed other than spacing)
 5. ignorePlayers: plugin specific to eden but could be useful to make a similar for your own map. It loads the map code and searches for some patterns to ignore and removes those from the output (I don't need to translate player names that bought something).
 6. ignoreStrings: similar but with specific strings I don't want to translate
+7. setUntranslated: this plugin checks if there is no translation available for a string (no newTranslated or oldTranslated is equal to newUntranslated). Beware that this can result in false positives for cases where it is a string that does not need to be different.
+8. exportTokens: exports strings to translate via something like google translate. Check usage in [Translating a map from scratch](#translating-a-map-from-scratch)
+9. importTokens: imports the exported tokens by exportTokens.  
+10. koreanExportToken: subplugin of exportTokens that sets what needs to be exported
 
 Example: `node toJson.js path/to/newMap/map.mpq path/to/oldMap/eng_map.mpq path/to/oldMap/map.mpq path/to/output/translations.yaml plugins/setChanged.js plugins/guessTranslations.js`
 
@@ -77,7 +81,18 @@ There may be situations where you either forgot to apply some plugin or want to 
 Example: `node update.js path/to/output/translations.yaml plugins/ignoreStrings.js plugins/ignorePlayers.js`
 
 # Translating a map from scratch:
-To be updated when I try it
+One option is to run `node toJson.js map1 output.yaml` and translate everything. This process takes a lot of time, but will give you accurate translation. I recommend making use of google translate to do a first translation and then you can choose to fix/improve it:
+1. `node toJson.js map1 output.yaml plugins/setUntranslated.js plugins/exportTokens.js tokens.txt plugins\koreanExportToken`. Subplugins go without .js extension, you might need a different one for non korean maps or just use no subplugin. Output will be saved in tokens.txt, you can choose to remove lines from there but don't edit lines.
+2. Use a tool that translates that, such as [google translate document](https://translate.google.com/?sl=ko&tl=en&op=docs). If there are many strings, google translate won't do all at once, so check if end of file is still untranslated and just refresh until all is translated. Let's assume we save this translated file as translated_tokens.txt
+3. `node update.js map1 output.yaml plugins/importTokens.js tokens.txt translated_tokens.txt plugins/koreanExportToken plugins/setUntranslated.js`. First parameter is path to original tokens, second parameter path to translated tokens and the rest is subplugins (which should be the same you used with export). We can also rerun setUntranslated after to update what still needs translating. Note that exportTokens does not export strings directly, it tokenizes it based on a criteria so a single string that needs to be translated can end up being several tokenized lines. This helps be more consistent with similar strings with only number changes. Then I process these translations and try to rearrange the whole string with these partial translated tokens. Some times this can fail, in which case strings will now have a importFails property set to 1. For successful cases, newTranslated will be filled and a importedTokens property is set to true.
+4. `node toJson.js map1 output.yaml plugins/exportTokens.js tokens.txt plugins\koreanExportToken`. If there were some failures, we can rerun export plugin and it will see that importFails is set so intead of the tokenizing strategy, it will just output the whole string. We then translate this again as before with google translate.
+5. `node update.js map1 output.yaml plugins/importTokens.js tokens.txt translated_tokens.txt plugins/koreanExportToken plugins/setUntranslated.js`. We rerun import, and this should in most cases cover all the translations.
+6. Optionally Fix/improve translation and translate the few cases I failed to import.   
+7. `node toWar.js output.yaml .`
+8. Put translated files in map (always better to work with a copied map in case you need to reuse/recover original).
+
+## Another option
+I haven't tried it much but [this website](https://exquisite.mkdir.no/mpq/translator) has a simple interface to translate maps from scrath, so you can try it too.
 
 # Misc
 If you have any doubts feel free to ask in [Wc3 Translators United](https://discord.gg/QEPuPFB8jY) discord server.
