@@ -77,6 +77,10 @@ class Map {
         if (str && str.match(/TRIGSTR_\d+/)) {
             const index = parseInt(str.split('TRIGSTR_')[1]);
             this.usedStrings.add(index);
+            if (!this.strings[index]) {
+                console.warn('string not found in wts file: ' + index);
+                return str;
+            }
             return this.strings[index];
         }
 
