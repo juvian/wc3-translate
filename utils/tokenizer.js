@@ -24,5 +24,7 @@ const tokenize = (string) => {
 }
 
 const koreanRegex = /[\u3131-\uea60]/;
+const quotesRegex = /"((?:\\.|[^"\\])*)"/g;
+const fileRegex = /\.(blp|mdx|mp3|mdl|tga|dds|wav|slk|txt)/g
 
-module.exports = {tokenize, isColorCode, isNumber, koreanRegex}
+module.exports = {tokenize, isColorCode, isNumber, koreanRegex, quotesRegex, fileRegex}

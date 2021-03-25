@@ -84,7 +84,5 @@ for (const file of Object.values(filesToProcess)) {
     if (file.hasOwnProperty('toWar') == false) file.toWar = Translator.Objects.jsonToWar.bind(null, file.name);
 }
 
-const quotesRegex = /"((?:\\.|[^"\\])*)"/g;
-
-module.exports = {filesToProcess, quotesRegex};
+module.exports = {filesToProcess};
 

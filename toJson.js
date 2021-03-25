@@ -15,8 +15,11 @@ async function main() {
     for (const loc of mapLocations) {
         const map = new Map(loc);
 
-        await map.parseFiles();
+        await map.mount();
+
+        map.parseFiles();
         map.afterParseFiles();
+        map.unmount();
 
         maps.add(map);
     }

@@ -2,8 +2,11 @@ const Map = require('../utils/map');
 
 const afterParse = async (output) => {
     const map = new Map(output.metadata.maps[0].location);
-    await map.parseFiles(['war3map.j']);
-    const code = map.script;
+    await map.mount();
+
+    const code = map.readFile(map.getScript()).toString();
+
+    map.unmount();
 
     const toIgnore = new Set();
 

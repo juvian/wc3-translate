@@ -21,27 +21,52 @@ class Map {
         this.usedStrings = new Set();
     }
 
-    async parseFiles(files) {
+    parseFiles(files) {
+        for (const [buffer, file] of this.fileIterator(files)) {
+            if(buffer) this.parseFile(buffer, filesToProcess[file]);
+        }
+    }
+
+    async mount() {
+        if (this.isMPQ) {
+            FS.mount(FS.filesystems.NODEFS, { root: path.join(path.resolve(this.location), '..') }, '/maps');
+            this.mpq = await MPQ.open('/maps/' + path.basename(this.location), 'r');
+        }
+    }
+
+    unmount() {
+        if (this.isMPQ) {
+            this.mpq.close();
+            FS.unmount('/maps');
+        }
+    }
+
+    hasFile(name) {
+        return this.isMPQ ? this.mpq.hasFile(name) : fs.existsSync(path.join(this.location, file));
+    }
+
+    getScript() {
+        return ['war3map.j', 'scripts/war3map.j', 'war3map.lua', 'scripts/war3map.lua'].find(f => this.hasFile(f));
+    }
+
+    *fileIterator(files) {
         if (!this.location) return;
 
         files = files || Object.keys(filesToProcess);
 
-        console.log("parsing map " + this.location);
-
-        let mpq;
-
-        if (this.isMPQ) {
-            FS.mount(FS.filesystems.NODEFS, { root: path.join(path.resolve(this.location), '..') }, '/maps');
-            mpq = await MPQ.open('/maps/' + path.basename(this.location), 'r');
+        for (let file of files) {
+            if (file == "war3map.j") file = this.getScript();
+            yield [this.readFile(file), file];
         }
+    }
 
-        for (const file of files) {
+    readFile(file) {
+        try {
             let buffer;
             
-            if (mpq) {
-                let toOpen = !mpq.hasFile(file) && file == "war3map.j" && mpq.hasFile('scripts\\war3map.j') ? 'scripts\\war3map.j' : file;
-                if (mpq.hasFile(toOpen)) {
-                    const f = mpq.openFile(toOpen);
+            if (this.mpq) {
+                if (this.mpq.hasFile(file)) {
+                    const f = this.mpq.openFile(file);
                     buffer = Buffer.from(f.read());
                     f.close();
                 }
@@ -49,12 +74,9 @@ class Map {
                 buffer = fs.existsSync(path.join(this.location, file)) ? fs.readFileSync(path.join(this.location, file)) : null;
             }
             
-            if(buffer) this.parseFile(buffer, filesToProcess[file]);
-        }
-
-        if (mpq) {
-            mpq.close();
-            FS.unmount('/maps');
+            return buffer;
+        } catch (ex) {
+            console.error('Failed to read file ' + file, ex.message);
         }
     }
 

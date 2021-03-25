@@ -13,6 +13,7 @@ async function main() {
     for (const plugin of plugins) {
         if (plugin.module.afterParse) await plugin.module.afterParse(input);
     }
+    
     fs.writeFileSync(inputLocation, serialize(path.extname(inputLocation), input));
 }
 

@@ -1,8 +1,9 @@
 const Map = require('./map');
-const {filesToProcess, quotesRegex} = require('../config');
+const {filesToProcess} = require('../config');
 const Processor = require('./processor');
 const path = require('path');
 const {replaceHex} = require('../utils/utils');
+const {quotesRegex} = require('../utils/tokenizer');
 
 module.exports = class Maps {
 

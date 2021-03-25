@@ -1,9 +1,10 @@
-const {filesToProcess, quotesRegex} = require('./config');
+const {filesToProcess} = require('./config');
 const fs = require('fs');
 const path = require('path');
 const {deserialize, interfaceIterator} = require('./utils/utils');
 const Map = require('./utils/map');
 const {parseArgs} = require('./utils/argParser');
+const {quotesRegex} = require('./utils/tokenizer');
 
 async function main() {
     const args = await parseArgs(process.argv.slice(2));
@@ -13,7 +14,8 @@ async function main() {
     const input = deserialize(path.extname(inputLocation), fs.readFileSync(inputLocation));
     const map = new Map(input.metadata.maps[0].location);
 
-    await map.parseFiles();
+    await map.mount();
+    map.parseFiles();
 
     for (const [name, file] of Object.entries(filesToProcess)) {
         if (file.props) {
