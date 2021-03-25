@@ -120,7 +120,7 @@ module.exports = class Maps {
         let idx = 0;
         let slow = 0;
 
-        this.maps.forEach(m => m.script = m.script.replace(quotesRegex, (str) => str.replaceAll(/[\r\n]/g, '??|??||??')).split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(str => replaceHex(str).replaceAll('??|??||??', '\n')));
+        this.maps.forEach(m => m.script = m.script.replace(quotesRegex, (str) => str.replace(/[\r\n]/g, '??|??||??')).split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(str => replaceHex(str).split('??|??||??').join('\n')));
 
         console.log("processing scripts", this.maps.map(m => m.script.length))
 
@@ -135,7 +135,7 @@ module.exports = class Maps {
                     const s2 = this.getMatches(this.oldTranslated.script[i], this.oldTranslated);
         
                     for (let k = 0; k < Math.min(s1.length, s2.length); k++) {
-                        strings[s1[k]] = s2[k].replaceAll('\\n', '\n');
+                        strings[s1[k]] = s2[k].split('\\n').join('\n');
                     }
 
                     break;
@@ -145,7 +145,7 @@ module.exports = class Maps {
 
         for (const line of this.newUntranslated.script) {
             for (const match of this.getMatches(line, this.newUntranslated, true)) {
-                newStrings[match] = newStrings[match] || {newUntranslated: match.replaceAll('\\n', '\n')};
+                newStrings[match] = newStrings[match] || {newUntranslated: match.split('\\n').join('\n')};
                 if (strings[match]) newStrings[match].oldTranslated = strings[match];
             }
         }
