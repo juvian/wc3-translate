@@ -4,7 +4,7 @@ const path = require('path');
 const {deserialize, interfaceIterator} = require('./utils/utils');
 const Map = require('./utils/map');
 const {parseArgs} = require('./utils/argParser');
-const {quotesRegex} = require('./utils/tokenizer');
+const {iterateBufferStrings} = require('./utils/tokenizer');
 
 async function main() {
     const args = await parseArgs(process.argv.slice(2));
@@ -16,7 +16,7 @@ async function main() {
 
     await map.mount();
     map.parseFiles();
-
+    
     for (const [name, file] of Object.entries(filesToProcess)) {
         if (file.props) {
             const reversedProps = Object.fromEntries(Object.entries(file.props).map(arr => [arr[1], arr[0]]));
@@ -48,11 +48,24 @@ async function main() {
                     }
                 }
             }
-        } else if (name == "war3map.j") {
-            map.script = map.script.replace(quotesRegex, (match) => {
-                const val = map.getString(match.substring(1, match.length - 1));
-                return '"' + (input.script[val]?.newTranslated || input.script[val]?.oldTranslated || val).replace(/"/g, '\\"') + '"';
-            });
+        } else if (name == "war3map.j") {            
+            let newScript = [];
+            let lastIdx = 0;
+            
+            for (const {str, beganAt, idx} of iterateBufferStrings(map.script)) {
+                const val = map.getString(str).toString();
+                const replacement = input.script[val]?.newTranslated || input.script[val]?.oldTranslated;
+                
+                if (replacement != null) {
+                    newScript.push(map.script.slice(lastIdx, beganAt));
+                    newScript.push(Buffer.from(replacement));
+                    lastIdx = idx + 1;
+                }
+            }
+
+            newScript.push(map.script.slice(lastIdx));
+
+            map.script = {buffer: Buffer.concat(newScript)};
         } else if (name == "war3map.wts") {
             for (const key of Object.keys(map.strings)) {
                 map.strings[key] = input.strings[key]?.newTranslated || input.strings[key]?.oldTranslated || map.strings[key];

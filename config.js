@@ -61,7 +61,7 @@ const filesToProcess = {
     },
     "war3map.j": {
         name: "script",
-        toJson: (b) => b.toString(),
+        toJson: (b) => b,
         toWar: (b) => b,
         afterParse: false,
         empty: ""
