@@ -6,7 +6,7 @@ const {processTokens} = require('./exportTokens');
 
 let tokensLocation;
 let translatedTokensLocation;
-let extraPlugins;
+let extraPlugins = [];
 
 const init = (plugin) => {
     if (plugin.args.length < 2) throw Error('importTokens plugin requires path to tokens and path to translated tokens');
@@ -31,6 +31,11 @@ const afterParse = (output) => {
     for (const {data} of mapIterator(output)) {
         const shouldTranslate = !data.importedTokens && extraPlugins.every(p => !p.module.shouldTranslateData || p.module.shouldTranslateData(data));
         if (shouldTranslate) {
+            if (data.importFails == 1) {
+                data.newTranslated = data.newUntranslated.split('\n').map(l => translations[l]).join('\n');
+                data.importedTokens = true;
+                continue;
+            }
             const tokens = tokenize(data.newUntranslated);
             const strs = processTokens(tokens);
             const numbers = tokens.filter(t => t.hasOwnProperty('token') && isNumber(t.token)).map(c => c.token);
