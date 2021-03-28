@@ -29,7 +29,7 @@ const afterParse = (output) => {
     }
 
     for (const {data} of mapIterator(output)) {
-        const shouldTranslate = extraPlugins.every(p => !p.module.shouldTranslateData || p.module.shouldTranslateData(data));
+        const shouldTranslate = !data.importedTokens && extraPlugins.every(p => !p.module.shouldTranslateData || p.module.shouldTranslateData(data));
         if (shouldTranslate) {
             const tokens = tokenize(data.newUntranslated);
             const strs = processTokens(tokens);

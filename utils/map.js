@@ -42,7 +42,7 @@ class Map {
     }
 
     hasFile(name) {
-        return this.isMPQ ? this.mpq.hasFile(name) : fs.existsSync(path.join(this.location, file));
+        return this.isMPQ ? this.mpq.hasFile(name) : fs.existsSync(path.join(this.location, name));
     }
 
     getScript() {
@@ -117,10 +117,10 @@ class Map {
         const folderPath = outputLocation || path.join(this.isMPQ ? path.join(path.resolve(this.location), '..') : this.location, "translated");
 
         if (!fs.existsSync(path.join(folderPath))){
-            fs.mkdirSync(path.join(folderPath));
+            fs.mkdirSync(path.join(folderPath), {recursive:true});
         }
 
-        fs.writeFileSync(path.join(folderPath, name), toWar.buffer || toWar, 'utf8');
+        fs.writeFileSync(path.join(folderPath, name), toWar.buffer || toWar);
     }
 }
 

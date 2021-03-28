@@ -2,6 +2,7 @@ const fs = require('fs');
 const {parseArgs} = require('../utils/argParser');
 const Map = require('../utils/map');
 const {fileRegex} = require('../utils/tokenizer');
+const path = require('path');
 
 const shouldScan = (file) => {
     return file.endsWith('mdx') || file.includes('war3map');
@@ -14,9 +15,9 @@ const checkFile = (map, file, seen, foundFiles) => {
 
     if (map.hasFile(file)) {
         foundFiles.add(file);
+        if (shouldScan(file)) scanFile(map, file, seen, foundFiles);
     }
 
-    if (shouldScan(file)) scanFile(map, file, seen, foundFiles);
     if (file.endsWith('.mdx')) checkFile(map, file.slice(-4) + '_portrait.mdx', seen, foundFiles);
 }
 
@@ -40,6 +41,8 @@ const scanFile = (map, file, seen, foundFiles) => {
                 checkFile(map, file, seen, foundFiles);
             }
         }
+    } else {
+        foundFiles.delete(file);
     }
 }
 
@@ -47,13 +50,15 @@ async function main() {
     const args = await parseArgs(process.argv.slice(2));
     const mapLocation = args[0].arg;
     const outputLocation = args[1].arg;
-    const listFileLocations = args.slice(2).map(a => a.arg).concat(['.\\utils\\listfile.txt']);
+    const outputFolderLocation = args.length > 2 && args[2].arg.endsWith('.txt') == false ? args[2].arg : null;
+    const listFileLocations = args.slice(2).map(a => a.arg).filter(arg => arg !== outputFolderLocation).concat([path.join(__dirname, '..\\utils\\listfile.txt')]);
 
     const files = new Set();
 
     for (const location of listFileLocations) {
         fs.readFileSync(location).toString().split(/\r\n/).forEach(f => files.add(f));
     }
+    
 
     const map = new Map(mapLocation);
     await map.mount();
@@ -66,6 +71,23 @@ async function main() {
     console.log("found " + foundFiles.size + " files");
 
     fs.writeFileSync(outputLocation, Array.from(foundFiles).join('\n'))
+
+    if (outputFolderLocation) {
+        for (const file of foundFiles) {
+            try {
+                const buffer = map.readFile(file);
+                const loc = path.join(outputFolderLocation, file);
+
+                if (!fs.existsSync(path.dirname(loc))) {
+                    fs.mkdirSync(path.dirname(loc), {recursive: true});
+                }
+
+                if (buffer && !fs.existsSync(loc)) fs.writeFileSync(loc, buffer);
+            } catch (e) {
+                console.warn('failed to extract ' + file, e);
+            }
+        }
+    }
 }
 
 main();
