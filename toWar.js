@@ -58,7 +58,7 @@ async function main() {
                 
                 if (replacement != null) {
                     newScript.push(map.script.slice(lastIdx, beganAt));
-                    newScript.push(Buffer.from(replacement));
+                    newScript.push(Buffer.from('"' + replacement.replace(/"/g, '\\"').split('\n').join('\\n') + '"'));
                     lastIdx = idx + 1;
                 }
             }
