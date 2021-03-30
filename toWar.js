@@ -4,7 +4,7 @@ const path = require('path');
 const {deserialize, interfaceIterator} = require('./utils/utils');
 const Map = require('./utils/map');
 const {parseArgs} = require('./utils/argParser');
-const {iterateBufferStrings} = require('./utils/tokenizer');
+const {iterateBufferStrings, safeEscapeDoubleQuotes} = require('./utils/tokenizer');
 
 async function main() {
     const args = await parseArgs(process.argv.slice(2));
@@ -18,6 +18,8 @@ async function main() {
     map.parseFiles();
     
     for (const [name, file] of Object.entries(filesToProcess)) {
+        if (Object.keys(map[file.name]) == 0) continue;
+
         if (file.props) {
             const reversedProps = Object.fromEntries(Object.entries(file.props).map(arr => [arr[1], arr[0]]));
 
@@ -57,7 +59,7 @@ async function main() {
                 let replacement = input.script[val]?.newTranslated || input.script[val]?.oldTranslated;
                 
                 if (replacement != null) {
-                    replacement = replacement.replace(/"/g, '\\"').split('\n').join('\\n');
+                    replacement = safeEscapeDoubleQuotes(replacement).split('\n').join('\\n');
 
                     newScript.push(map.script.slice(lastIdx, beganAt));
 
@@ -88,7 +90,7 @@ async function main() {
             for (const key of Object.keys(map.strings)) {
                 map.strings[key] = input.strings[key]?.newTranslated || input.strings[key]?.oldTranslated || map.strings[key];
             }
-        } else if (name == "war3map.w3i") {
+        } else if (name == "war3map.w3i") {            
             for (const prop of ["name", "author", "description", "recommendedPlayers"]) {
                 map.info.map[prop] = input.info[prop].newTranslated || input.info[prop].oldTranslated || map.info.map[prop];
             }

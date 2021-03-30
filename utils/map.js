@@ -9,6 +9,8 @@ FS.mkdir('/maps');
 process.removeAllListeners('uncaughtException') // stormlib hides error stack
 process.removeAllListeners('unhandledRejection') // stormlib hides error stack
 
+const scripts = ['war3map.j', 'scripts/war3map.j', 'war3map.lua', 'scripts/war3map.lua'];
+
 class Map {
     constructor(loc) {   
         this.location = loc || "";
@@ -23,7 +25,11 @@ class Map {
 
     parseFiles(files) {
         for (const [buffer, file] of this.fileIterator(files)) {
-            if(buffer) this.parseFile(buffer, filesToProcess[file]);
+            try {
+                if(buffer) this.parseFile(buffer, filesToProcess[scripts.includes(file) ? 'war3map.j' : file]);
+            } catch(e) {
+                console.error('failed to parse ' + file + ', will skip', e)
+            }
         }
     }
 
@@ -42,11 +48,11 @@ class Map {
     }
 
     hasFile(name) {
-        return this.isMPQ ? this.mpq.hasFile(name) : fs.existsSync(path.join(this.location, name));
+        return this.isMPQ ? this.mpq.hasFile(name.replace(/\//g, '\\')) : fs.existsSync(path.join(this.location, name));
     }
 
     getScript() {
-        return ['war3map.j', 'scripts/war3map.j', 'war3map.lua', 'scripts/war3map.lua'].find(f => this.hasFile(f));
+        return scripts.find(f => this.hasFile(f));
     }
 
     *fileIterator(files) {
@@ -64,14 +70,14 @@ class Map {
         try {
             let buffer;
             
-            if (this.mpq) {
-                if (this.mpq.hasFile(file)) {
-                    const f = this.mpq.openFile(file);
+            if (this.hasFile(file)) {
+                if (this.mpq) {
+                    const f = this.mpq.openFile(file.replace(/\//g, '\\'));
                     buffer = Buffer.from(f.read());
                     f.close();
+                } else {
+                    buffer = fs.readFileSync(path.join(this.location, file));
                 }
-            } else {
-                buffer = fs.existsSync(path.join(this.location, file)) ? fs.readFileSync(path.join(this.location, file)) : null;
             }
             
             return buffer;

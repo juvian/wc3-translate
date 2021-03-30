@@ -17,7 +17,7 @@ function* stringsIterator(strings, type) {
 }
 
 function* infoIterator(info) {
-  if (info == null || Object.keys(info).length == 0) return;
+  if (info == null || Object.keys(info).length == 0 || info.players.length == 0) return;
   
   for (const id of ["name", "author", "description", "recommendedPlayers"]) {
     yield {data: info[id], id, type: "info"};
