@@ -94,6 +94,9 @@ One option is to run `node toJson.js map1 output.yaml` and translate everything.
 ## Another option
 I haven't tried it much but [this website](https://exquisite.mkdir.no/mpq/translator) has a simple interface to translate maps from scratch with a few clicks, so you can try it too.
 
+## Map Protection (read-only)
+Check [here](/data/protection.md)
+
 # Misc
 If you have any doubts feel free to ask in [Wc3 Translators United](https://discord.gg/QEPuPFB8jY) discord server.
 
