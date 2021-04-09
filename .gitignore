@@ -1,3 +1,4 @@
 node_modules
 package-lock.json
-data
+data/*
+!data/emptyMap.w3x
