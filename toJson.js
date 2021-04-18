@@ -17,6 +17,10 @@ async function main() {
 
         await map.mount();
 
+        if (map.hasFile('Units/AbilityData.slk') || map.hasFile('Units/ItemData.slk')) {
+            console.warn("Map looks to be in slk format, strings could be missing. Try converting to obj format with https://www.hiveworkshop.com/threads/w3x2lni-v2-7-2.305201/")
+        }
+
         map.parseFiles();
         map.afterParseFiles();
         map.unmount();
