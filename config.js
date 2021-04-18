@@ -28,7 +28,7 @@ const filesToProcess = {
     },
     "war3map.w3a": {
         name: "abilities",
-        props: {"aub1": "uberTip", "anam": "name", "atp1": "tip", "aret": "researchTip", "arut": "researchUberTip"},
+        props: {"aub1": "uberTip", "anam": "name", "atp1": "tip", "aret": "researchTip", "arut": "researchUberTip", "aut1": "unTip", "auu1": "unUberTip"},
         ignore: ["ansf", "arhk", "ahky", "auhk"]
     },
     "war3map.w3t": {
