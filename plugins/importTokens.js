@@ -17,8 +17,8 @@ const init = (plugin) => {
 }
 
 const afterParse = (output) => {
-    const untranslatedTokens = fs.readFileSync(tokensLocation).toString().split('\n');
-    const translatedTokens = fs.readFileSync(translatedTokensLocation).toString().split('\n');
+    const untranslatedTokens = fs.readFileSync(tokensLocation).toString().trimEnd().split('\n');
+    const translatedTokens = fs.readFileSync(translatedTokensLocation).toString().trimEnd().split('\n');
 
     if (untranslatedTokens.length != translatedTokens.length) throw Error("translatedTokens and untranslatedTokens files have different length")
 
