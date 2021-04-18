@@ -97,6 +97,9 @@ I haven't tried it much but [this website](https://exquisite.mkdir.no/mpq/transl
 ## Map Protection (read-only)
 Check [here](/data/protection.md)
 
+## SLK to OBJ format
+Check [this video from Magepowers](https://www.youtube.com/watch?v=KYqyT8sZrzI). You might need to combine it with deprotection if map is read only
+
 # Misc
 If you have any doubts feel free to ask in [Wc3 Translators United](https://discord.gg/QEPuPFB8jY) discord server.
 
