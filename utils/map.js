@@ -136,22 +136,22 @@ class Map {
         try {
             console.log("validating script");
 
-            let common = './data/common.j';
-            let blizzard = './data/blizzard.j';
+            let common = '../data/common.j';
+            let blizzard = '../data/blizzard.j';
 
             if (this.hasFile('scripts/common.j')) {
-                fs.writeFileSync('./data/map_common.j', this.readFile('scripts/common.j'));
-                common = './data/map_common.j';
+                fs.writeFileSync(path.join(__dirname, '../data/map_common.j'), this.readFile('scripts/common.j'));
+                common = '../data/map_common.j';
             }
 
             if (this.hasFile('scripts/blizzard.j')) {
-                fs.writeFileSync('./data/map_blizzard.j', this.readFile('scripts/blizzard.j'));
-                blizzard = './data/map_blizzard.j';
+                fs.writeFileSync(path.join(__dirname, '../data/map_blizzard.j'), this.readFile('scripts/blizzard.j'));
+                blizzard = '../data/map_blizzard.j';
             }
 
-            fs.writeFileSync('./data/map_script.j', script);
+            fs.writeFileSync(path.join(__dirname, '../data/map_script.j'), script);
 
-            const promise = exec(`pjass ${path.resolve(common)} ${path.resolve(blizzard)} ${path.resolve('./data/map_script.j')}`);
+            const promise = exec(`${path.join(__dirname, '../pjass')} ${path.join(__dirname, common)} ${path.join(__dirname, blizzard)} ${path.join(__dirname, '../data/map_script.j')}`);
             const child = promise.child;
 
             child.stdout.on('data', function(data) {
