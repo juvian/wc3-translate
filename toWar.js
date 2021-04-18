@@ -86,11 +86,13 @@ async function main() {
             newScript.push(map.script.slice(lastIdx));
 
             map.script = {buffer: Buffer.concat(newScript)};
+
+            map.validateScript(map.script.buffer);
         } else if (name == "war3map.wts") {
             for (const key of Object.keys(map.strings)) {
                 map.strings[key] = input.strings[key]?.newTranslated || input.strings[key]?.oldTranslated || map.strings[key];
             }
-        } else if (name == "war3map.w3i") {            
+        } else if (name == "war3map.w3i") {   
             for (const prop of ["name", "author", "description", "recommendedPlayers"]) {
                 map.info.map[prop] = input.info[prop].newTranslated || input.info[prop].oldTranslated || map.info.map[prop];
             }

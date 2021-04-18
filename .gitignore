@@ -3,3 +3,6 @@ package-lock.json
 data/*
 !data/emptyMap.w3x
 !data/protection.md
+!data/common.j
+!data/blizzard.j
+pjass.exe

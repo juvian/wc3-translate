@@ -3,6 +3,9 @@ const path = require('path');
 const fs = require('fs');
 const { FS, MPQ } = require('@wowserhq/stormjs');
 const {isMPQ} = require('./argParser');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
 
 FS.mkdir('/maps');
 
@@ -128,6 +131,43 @@ class Map {
 
         fs.writeFileSync(path.join(folderPath, name), toWar.buffer || toWar);
     }
+
+    async validateScript(script) {
+        try {
+            console.log("validating script");
+
+            let common = './data/common.j';
+            let blizzard = './data/blizzard.j';
+
+            if (this.hasFile('scripts/common.j')) {
+                fs.writeFileSync('./data/map_common.j', this.readFile('scripts/common.j'));
+                common = './data/map_common.j';
+            }
+
+            if (this.hasFile('scripts/blizzard.j')) {
+                fs.writeFileSync('./data/map_blizzard.j', this.readFile('scripts/blizzard.j'));
+                blizzard = './data/map_blizzard.j';
+            }
+
+            fs.writeFileSync('./data/map_script.j', script);
+
+            const promise = exec(`pjass ${path.resolve(common)} ${path.resolve(blizzard)} ${path.resolve('./data/map_script.j')}`);
+            const child = promise.child;
+
+            child.stdout.on('data', function(data) {
+                console.log(data);
+            });
+
+            await promise;
+        } catch (e) {
+            if (e.message.includes(`'pjass' is not recognized as an internal or external command`)) {
+                console.log("pjass not installed, can't validate script. Install from https://www.hiveworkshop.com/threads/pjass-updates.258738/");
+            } else {
+                console.log(e);
+            }
+        }
+    }
+
 }
 
 module.exports = Map;
