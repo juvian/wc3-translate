@@ -24,7 +24,7 @@ module.exports = class Maps {
 
         for (const file of Object.values(filesToProcess)) {
             if (this.newUntranslated.hasOwnProperty(file.name) && file.props) {
-                output[file.name] = new Processor(this.maps.map(m => Object.assign({}, m[file.name].standard, m[file.name].custom)), this.maps, file.props, file.ignore).process();
+                output[file.name] = new Processor(this.maps.map(m => Object.assign({}, m[file.name].original, m[file.name].custom)), this.maps, file.props, file.ignore).process();
             }
         } 
 

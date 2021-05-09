@@ -3,13 +3,15 @@ const fs = require('fs');
 const interface = require('./utils/gameInterface');
 
 const toEntries = (data) => {
-    for (const key of Object.keys(data.custom)) {
-        const info = {}; 
-        for (const modification of data.custom[key]) {
-            info[modification.id] = info[modification.id] || [];
-            info[modification.id].push(modification);
+    for (const entries of Object.values(data)) {
+        for (const key of Object.keys(entries)) {
+            const info = {}; 
+            for (const modification of entries[key]) {
+                info[modification.id] = info[modification.id] || [];
+                info[modification.id].push(modification);
+            }
+            entries[key] = info;
         }
-        data.custom[key] = info;
     }
 }
 
