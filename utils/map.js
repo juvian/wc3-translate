@@ -5,6 +5,7 @@ const { FS, MPQ } = require('@wowserhq/stormjs');
 const {isMPQ} = require('./argParser');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const commandExists = require('command-exists').sync;
 
 
 FS.mkdir('/maps');
@@ -133,6 +134,13 @@ class Map {
     }
 
     async validateScript(script) {
+        const exists = commandExists('pjass');
+
+        if (!exists) {
+            console.log("pjass not installed, can't validate script. Install from https://www.hiveworkshop.com/threads/pjass-updates.258738/");
+            return;
+        }
+
         try {
             console.log("validating script");
 
@@ -160,11 +168,7 @@ class Map {
 
             await promise;
         } catch (e) {
-            if (e.message.includes(`'pjass' is not recognized as an internal or external command`)) {
-                console.log("pjass not installed, can't validate script. Install from https://www.hiveworkshop.com/threads/pjass-updates.258738/");
-            } else {
-                console.log(e);
-            }
+            console.log(e);
         }
     }
 
