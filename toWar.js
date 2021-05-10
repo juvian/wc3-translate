@@ -24,7 +24,8 @@ async function main() {
             const reversedProps = Object.fromEntries(Object.entries(file.props).map(arr => [arr[1], arr[0]]));
 
             for (const [id, props] of Object.entries(input[file.name])) {
-                if (map[file.name].custom.hasOwnProperty(id) == false) continue;
+                const obj = [map[file.name].custom, map[file.name].original].find(o => o != null && o.hasOwnProperty(id));
+                if (obj == null) continue;
 
                 const translations = {};
                 const currentIdx = {};
@@ -40,7 +41,7 @@ async function main() {
                     }
                 }
 
-                for (const modification of map[file.name].custom[id]) {
+                for (const modification of obj[id]) {
                     if (currentIdx.hasOwnProperty(modification.id)) {
                         const val = translations[modification.id][currentIdx[modification.id]++];
                         
