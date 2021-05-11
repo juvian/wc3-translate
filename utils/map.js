@@ -134,7 +134,7 @@ class Map {
     }
 
     async validateScript(script) {
-        const exists = commandExists('pjass');
+        const exists = commandExists(path.join(__dirname, '../pjass'));
 
         if (!exists) {
             console.log("pjass not installed, can't validate script. Install from https://www.hiveworkshop.com/threads/pjass-updates.258738/");
