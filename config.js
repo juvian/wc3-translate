@@ -18,7 +18,7 @@ const toEntries = (data) => {
 const filesToProcess = {
     "war3map.w3u": {
         name: "units",
-        props: {"unam": "name", "upro": "properNames", "uawt": "awakenTip", "utip": "tip", "utup": "uberTip", "utpr": "reviveTip"},
+        props: {"unam": "name", "upro": "properNames", "uawt": "awakenTip", "utip": "tip", "utub": "uberTip", "utpr": "reviveTip"},
         ignore: ["unsf"]
     },
     "war3map.wts": {
