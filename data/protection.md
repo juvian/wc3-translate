@@ -25,11 +25,11 @@ Choose the folder where you extracted the files with previous command and when i
 # Without my tool
 It is possible some maps featuring new protections work with mpq editor but not my tool. In these cases, you will have to extract the files manually from mpq editor.
 
-Same as before, open map in mpq editor, do name scanner, but hit Apply List instead of Save List. You should see files with names now. Click on name to order by name desc and see if there are many unknown files). These appear in the format File00000xxxx. 
+Same as before, open map in mpq editor, do name scanner, but hit Apply List instead of Save List. You should see files with names now. Click on name to order by name desc and see if there are many unknown files. These appear in the format File00000xxxx. 
 
 ![uknown-files](/images/unknown_files.png)
 
-Unknown files can either be fake files, unused files (both cases we don't care) or a file the map needs, which we will loose without figuring out the name. This case it very rare, as name breaking works very well to detect files mentioned in script/related files. The most common case of missing file names that are actually used is maps that modify standard wc3 files such as UI. As they are standard, wc3 loads them by default and thus are not mentioned in any map file, so name breaking can't recover them. This is fixable by adding a listfile with all standard wc3 files paths. This can be made from the standard wc3 files, but you can just download it from [zezula](<http://www.zezula.net/download/listfiles.zip>). As this is different in each wc3 version, it might still be missing some names you need, but should cover most cases. With this you can click on add list file and select the right file.
+Unknown files can either be fake files, unused files (both cases we don't care) or a file the map needs, which we will lose without figuring out the name. This case it very rare, as name breaking works very well to detect files mentioned in script/related files. The most common case of missing file names that are actually used is maps that modify standard wc3 files such as UI. As they are standard, wc3 loads them by default and thus are not mentioned in any map file, so name breaking can't recover them. This is fixable by adding a listfile with all standard wc3 files paths. This can be made from the standard wc3 files, but you can just download it from [zezula](<http://www.zezula.net/download/listfiles.zip>). As this is different in each wc3 version, it might still be missing some names you need, but should cover most cases. With this you can click on add list file and select the right file.
 
 ![add-listfile](/images/add_listfile.png)
 
