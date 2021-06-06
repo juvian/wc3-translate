@@ -12,7 +12,7 @@ After clicking there, just hit the first scan button and it will try to find out
 
 ![name-scanner-list](/images/name_scanner_list.png)
 
-Choose Save List and put save it wherever, usually in same folder as your map is a good choice. You could apply this list and then extract the files directly with MPQ Editor but that doesn't work well on some maps so better use my tool.
+Choose Save List and put save it wherever as ladik.txt, usually in same folder as your map is a good choice. You could apply this list and then extract the files directly with MPQ Editor but that doesn't work well on some maps so better use my tool.
 
 Run `node scripts/findListFile.js yourwc3map list.txt folderPath ladik.txt` where yourwc3map is the path to your w3x, list.txt is the path to where you want to store the name list, folderPath is where you want to extract the files and the rest of the parameters are optionally additional name lists to consider (as my tool also does name breaking in another way). Between ladik and mine, you should have most of the useful files found and extracted.
 
