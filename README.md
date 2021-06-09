@@ -32,6 +32,7 @@ There is also a plugins system, which would allow you to extend the functionalit
 8. exportTokens: exports strings to translate via something like google translate. Check usage in [Translating a map from scratch](#translating-a-map-from-scratch)
 9. importTokens: imports the exported tokens by exportTokens.  
 10. koreanExportToken: subplugin of exportTokens that sets what needs to be exported
+11. reuseTranslations: useful when object ids don't match like in randomized ids maps, making transfering old translations to new map hard. This checks old korean strings and if new korean has the same string, reuses the old translation. Check example in script protected from package.json
 
 Example: `node toJson.js path/to/newMap/map.mpq path/to/oldMap/eng_map.mpq path/to/oldMap/map.mpq path/to/output/translations.yaml plugins/setChanged.js plugins/guessTranslations.js`
 
