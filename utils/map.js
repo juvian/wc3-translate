@@ -6,7 +6,8 @@ const {isMPQ} = require('./argParser');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const commandExists = require('command-exists').sync;
-
+const {replaceHex} = require('../utils/utils');
+const {quotesRegex} = require('../utils/tokenizer');
 
 FS.mkdir('/maps');
 
@@ -170,6 +171,11 @@ class Map {
         } catch (e) {
             console.log(e);
         }
+    }
+
+    preprocessScript() {
+        if (this.script instanceof Buffer == false) return;
+        this.script = this.script.toString().replace(quotesRegex, (str) => str.replace(/[\r\n]/g, '??|??||??')).split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(str => replaceHex(str).split('??|??||??').join('\n'))
     }
 
 }

@@ -1,5 +1,6 @@
 const { tokenize, isColorCode, isNumber } = require("../utils/tokenizer");
 const { mapIterator } = require("../utils/utils");
+const {resolvePluginPath} = require('../utils/argParser');
 const fs = require('fs');
 const path = require('path');
 
@@ -10,7 +11,7 @@ const init = (plugin) => {
     if (plugin.args.length < 1) throw Error('exportTokens plugin requires a path to output');
     outputLocation = plugin.args[0].arg;
     extraPlugins = plugin.args.slice(1);
-    extraPlugins.forEach(a => a.module = require(path.resolve(a.arg + '.js')));
+    extraPlugins.forEach(a => a.module = require(resolvePluginPath(a.arg + '.js')));
 }
 
 const processTokens = (tokens) => {

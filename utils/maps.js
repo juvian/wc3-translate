@@ -2,11 +2,14 @@ const Map = require('./map');
 const {filesToProcess} = require('../config');
 const Processor = require('./processor');
 const path = require('path');
-const {replaceHex} = require('../utils/utils');
 const {quotesRegex} = require('../utils/tokenizer');
 
 module.exports = class Maps {
 
+    constructor(maps) {
+        if (maps) maps.forEach(map => this.add(map));
+    }
+    
     add(map) {
         if (this.newUntranslated == undefined) this.newUntranslated = map;
         else if (this.oldTranslated == undefined) this.oldTranslated = map;
@@ -120,11 +123,10 @@ module.exports = class Maps {
         let idx = 0;
         let slow = 0;
 
-        this.maps.forEach(m => m.script = m.script.toString().replace(quotesRegex, (str) => str.replace(/[\r\n]/g, '??|??||??')).split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(str => replaceHex(str).split('??|??||??').join('\n')));
-
+        this.maps.forEach(m => m.preprocessScript());
         console.log("processing scripts", this.maps.map(m => m.script.length))
 
-        for (let j = 0; j < 50; j++) {
+        for (let j = 0; j < Math.min(50, this.oldUntranslated.script.length); j++) {
             for (let i = idx; i < Math.min(this.oldTranslated.script.length, idx + 5000); i++) {
                 if (i - idx > 1000 && slow++ < 20) console.warn('slow matching on line ', this.oldUntranslated.script[j]);
 
