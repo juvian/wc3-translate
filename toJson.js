@@ -31,7 +31,7 @@ async function main() {
     const output = maps.process();
 
     for (const plugin of plugins) {
-        if (plugin.module.afterParse) await plugin.module.afterParse(output);
+        if (plugin.module.afterParse) await plugin.module.afterParse(output, maps);
     }
 
     for (const {data} of mapIterator(output)) {
