@@ -10,7 +10,7 @@ const afterParse = async (output) => {
 
     const toIgnore = new Set();
 
-    for (const match of code.matchAll(/udg_PlayerName\[.*\] ==.*|set udg_Plyer_C\[.*|set udg_Player_S_Name\[.*/g)) {
+    for (const match of code.matchAll(/udg_PlayerName\[.*\] ==.*|set udg_Plyer_C\[.*|set udg_Player_S_Name\[.*|set udg_Player_Title\[.*\] ==.*/g)) {
         if (match[0].split('"').length > 1) {
             toIgnore.add(match[0].split('"')[1]);
         }
