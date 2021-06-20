@@ -160,7 +160,7 @@ class Map {
 
             fs.writeFileSync(path.join(__dirname, '../data/map_script.j'), script);
 
-            const promise = exec(`${path.join(__dirname, '../pjass')} ${path.join(__dirname, common)} ${path.join(__dirname, blizzard)} ${path.join(__dirname, '../data/map_script.j')}`);
+            const promise = exec(`${path.join(__dirname, '../pjass')} "${path.join(__dirname, common)}" "${path.join(__dirname, blizzard)}" "${path.join(__dirname, '../data/map_script.j')}"`);
             const child = promise.child;
 
             child.stdout.on('data', function(data) {
