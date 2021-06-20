@@ -69,9 +69,13 @@ async function main() {
                         console.warn('replacement too long, will attempt to fix');
 
                         let splitted = "";
-
-                        for (let i = 0; i < replacement.length; i += 500) {
-                            splitted += '"' + replacement.substring(i, i + 500) + '" + ';
+                        let i = 0;
+                        
+                        while(i < replacement.length) {
+                            let until = i + 500;
+                            while (replacement[until] == '\\') until--;
+                            splitted += '"' + replacement.substring(i, until) + '" + ';
+                            i = until;
                         }
 
                         replacement = splitted.substring(0, splitted.length - 2);
