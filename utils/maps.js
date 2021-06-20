@@ -46,9 +46,8 @@ module.exports = class Maps {
     processStrings() {
         const result = {};
 
-        for (const [idx, str] of Object.entries(this.newUntranslated.strings).filter(arr => !this.newUntranslated.usedStrings.has(+arr[0]))) {
+        for (const [idx, str] of Object.entries(this.newUntranslated.strings).filter(arr => !this.newUntranslated.usedStrings.has(+arr[0]) && arr[1])) {
             result[idx] = {};
-
             for (const map of this.maps) {
                 if (map.strings.hasOwnProperty(idx)) result[idx][map.name] = map.strings[idx];
             }
@@ -85,10 +84,10 @@ module.exports = class Maps {
     processInterface() {
         const result = {};
 
-        for (const map of this.maps) {
-            for (const [key, obj] of Object.entries(map.interface)) {
-                for (const [prop, str] of Object.entries(obj)) {
-                    const val = map.getString(str);
+        for (const [key, obj] of Object.entries(this.newUntranslated.interface)) {
+            for (const prop of Object.keys(obj)) {
+                for (const map of this.maps) {
+                    const val = map.getString(map.interface?.[key]?.[prop]);
 
                     if (val && !filesToProcess["war3mapSkin.txt"].ignore.includes(key)) {
                         result[key] = result[key] || {};
@@ -98,6 +97,7 @@ module.exports = class Maps {
                 }
             }
         }
+        
 
         return result;
     }
