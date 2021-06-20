@@ -103,4 +103,4 @@ Check [this video from Magepowers](https://www.youtube.com/watch?v=KYqyT8sZrzI).
 
 # Misc
 If you have any doubts feel free to ask in [Wc3 Translators United](https://discord.gg/QEPuPFB8jY) discord server.
-
+There is [an example](/scripts/replacePgProtected.js) on how to edit a script on a pg protected map which would break using a text editor.
