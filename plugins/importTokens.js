@@ -3,6 +3,7 @@ const { mapIterator } = require("../utils/utils");
 const fs = require('fs');
 const path = require('path');
 const {processTokens} = require('./exportTokens');
+const {resolvePluginPath} = require('../utils/argParser');
 
 let tokensLocation;
 let translatedTokensLocation;
@@ -13,7 +14,7 @@ const init = (plugin) => {
     tokensLocation = plugin.args[0].arg;
     translatedTokensLocation = plugin.args[1].arg;
     extraPlugins = plugin.args.slice(2);
-    extraPlugins.forEach(a => a.module = require(path.resolve(a.arg + '.js')));
+    extraPlugins.forEach(a => a.module = require(resolvePluginPath(a.arg + '.js')));
 }
 
 const afterParse = (output) => {
