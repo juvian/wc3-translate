@@ -126,10 +126,10 @@ module.exports = class Maps {
         this.maps.forEach(m => m.preprocessScript());
         console.log("processing scripts", this.maps.map(m => m.script.length))
 
-        for (let j = 0; j < Math.min(50, this.oldUntranslated.script.length); j++) {
-            for (let i = idx; i < Math.min(this.oldTranslated.script.length, idx + 5000); i++) {
+        for (let j = 0; j < this.oldUntranslated.script.length; j++) {
+            for (let i = idx; i < Math.min(this.oldTranslated.script.length, idx + 500); i++) {
                 if (i - idx > 1000 && slow++ < 20) console.warn('slow matching on line ', this.oldUntranslated.script[j]);
-
+                
                 if (this.isSameLine(this.oldUntranslated.script[j], this.oldTranslated.script[i])) {
                     idx = i + 1;
 
@@ -142,6 +142,7 @@ module.exports = class Maps {
 
                     break;
                 }
+                if (i + 1 == Math.min(this.oldTranslated.script.length, idx + 500) && slow++ < 20) console.warn('could not match ' + this.oldUntranslated.script[j]);
             }
         } 
 
