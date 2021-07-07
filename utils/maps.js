@@ -128,7 +128,6 @@ module.exports = class Maps {
 
         for (let j = 0; j < this.oldUntranslated.script.length; j++) {
             for (let i = idx; i < Math.min(this.oldTranslated.script.length, idx + 500); i++) {
-                if (i - idx > 1000 && slow++ < 20) console.warn('slow matching on line ', this.oldUntranslated.script[j]);
                 
                 if (this.isSameLine(this.oldUntranslated.script[j], this.oldTranslated.script[i])) {
                     idx = i + 1;
