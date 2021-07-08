@@ -109,6 +109,12 @@ async function main() {
             for (const [idx, force] of Object.entries(map.info.forces)) {
                 force.name = input.info.forces[idx].name.newTranslated || input.info.forces[idx].name.oldTranslated || force.name;
             }
+
+            for (const parent of ["loadingScreen", "prologue"]) {
+                for (const id of Object.keys(input.info[parent])) {
+                    map.info[parent][id] = input.info[parent][id].newTranslated || input.info[parent][id].oldTranslated || map.info[parent][id]; 
+                }
+            }
         } else if (name == "war3mapSkin.txt") {
             for (const {id, parentId, data} of interfaceIterator(input[file.name])) {
                 const val = data?.newTranslated || data?.oldTranslated;

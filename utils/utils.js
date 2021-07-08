@@ -34,6 +34,12 @@ function* infoIterator(info) {
       yield {data, id, type: "info", parent: force};
     }
   }
+
+  for (const parent of ["loadingScreen", "prologue"]) {
+    for (const [id, data] of Object.entries(info[parent])) {
+      yield {data, id, type: "info", parent: info[parent]};
+    }
+  }
 }
 
 function* interfaceIterator(interface) {

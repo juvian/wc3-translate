@@ -57,7 +57,7 @@ module.exports = class Maps {
     }
 
     processInfo() {
-        const result = {players: [], forces: []};
+        const result = {players: [], forces: [], loadingScreen: {}, prologue: {}};
 
         for (const map of this.maps) {
             if (!map.info.players) continue;
@@ -76,6 +76,13 @@ module.exports = class Maps {
                 result.forces[idx] = result.forces[idx] || {name: {}};
                 result.forces[idx].name[map.name] = map.getString(force.name);                
             }
+
+            for (const parent of ["loadingScreen", "prologue"]) {
+                for (const prop of ["text", "title", "subtitle"]) {
+                    result[parent][prop] = result[parent][prop] || {};
+                    result[parent][prop][map.name] = map.getString(map.info[parent][prop]);
+                }
+            }
         }
 
         return result;
@@ -83,7 +90,7 @@ module.exports = class Maps {
 
     processInterface() {
         const result = {};
-
+        
         for (const [key, obj] of Object.entries(this.newUntranslated.interface)) {
             for (const prop of Object.keys(obj)) {
                 for (const map of this.maps) {
