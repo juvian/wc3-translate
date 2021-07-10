@@ -154,8 +154,11 @@ module.exports = class Maps {
 
         for (const line of this.newUntranslated.script) {
             for (const match of this.getMatches(line, this.newUntranslated, true)) {
-                newStrings[match] = newStrings[match] || {newUntranslated: match.split('\\n').join('\n'), oldUntranslated: match.split('\\n').join('\n')};
-                if (strings[match]) newStrings[match].oldTranslated = strings[match];
+                newStrings[match] = newStrings[match] || {newUntranslated: match.split('\\n').join('\n')};
+                if (strings[match]) {
+                    newStrings[match].oldTranslated = strings[match];
+                    newStrings[match].oldUntranslated = newStrings[match].newUntranslated;
+                }
             }
         }
 
