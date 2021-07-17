@@ -43,7 +43,7 @@ const filesToProcess = {
     },
     "war3map.w3q": {
         name: "upgrades",
-        props: {"gnam": "name", "gube": "uberTip", "gtip": "tip"},
+        props: {"gnam": "name", "gub1": "uberTip", "gtp1": "tip"},
         ignore: ["gef1"]
     },
     "war3map.w3b": {
