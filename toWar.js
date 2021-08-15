@@ -56,9 +56,8 @@ async function main() {
             let lastIdx = 0;
 
             for (const {str, beganAt, idx} of iterateBufferStrings(map.script)) {
-                const val = map.getString(str).toString();
+                const val = map.getString(str).toString().replace(/\r\n/g, '\n');
                 let replacement = input.script[val]?.newTranslated || input.script[val]?.oldTranslated;
-                
                 if (replacement != null) {
                     replacement = safeEscapeDoubleQuotes(replacement).split('\n').join('\\n');
 

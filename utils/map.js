@@ -175,7 +175,7 @@ class Map {
 
     preprocessScript() {
         if (this.script instanceof Buffer == false) return;
-        this.script = this.script.toString().replace(quotesRegex, (str) => str.replace(/[\r\n]/g, '??|??||??')).split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(str => replaceHex(str).split('??|??||??').join('\n'))
+        this.script = this.script.toString().replace(quotesRegex, (str) => str.replace(/\r\n/g, '\n').replace(/[\r\n]/g, '??|??||??')).split(/[\r\n]+/).filter(line => !line.trim().startsWith('//') && line.includes('"') && !line.trim().startsWith('call ExecuteFunc')).map(str => replaceHex(str).split('??|??||??').join('\n'))
     }
 
 }
