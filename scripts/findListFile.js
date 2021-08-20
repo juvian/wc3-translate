@@ -48,7 +48,6 @@ const solveParts = (parts, idx, options = new Set()) => {
 
 //try to replace variables to solve "UI\\"+VHv+"A.tga" case
 solveAdditions = function(str, idx, newFile) {
-    //console.log(str)
     if (solveAdditions.variableOptions == null) {
         solveAdditions.variableOptions = {};
 
@@ -105,10 +104,6 @@ const scanFile = (map, file, seen, foundFiles) => {
                         checkFile(map, option, seen, foundFiles);
                     }
                 }
-            }
-
-            if (file.endsWith('war3map.j') || file.endsWith('war3map.lua')) {
-                
             }
         }
     } else {
