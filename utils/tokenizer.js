@@ -50,6 +50,6 @@ function safeEscapeDoubleQuotes(str) {
 
 const koreanRegex = /[\u3131-\uea60]/;
 const quotesRegex = /"((?:\\.|[^"\\])*)"/g;
-const fileRegex = /\.(blp|mdx|mp3|mdl|tga|dds|wav|slk|txt|toc|fdf)/g
+const fileRegex = /\.(blp|mdx|mp3|mdl|tga|dds|wav|slk|txt|toc|fdf)/gi
 
 module.exports = {tokenize, isColorCode, isNumber, koreanRegex, quotesRegex, fileRegex, iterateBufferStrings, safeEscapeDoubleQuotes}

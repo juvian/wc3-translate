@@ -69,7 +69,7 @@ Units\UndeadUnitStrings.txt
 Units\UnitAbilities.slk
 Units\UnitBalance.slk
 Units\UnitData.slk
-Units\unitUI.slk
+Units\UnitUI.slk
 Units\UnitWeapons.slk
 scripts\blizzard.j
 scripts\HumanMelee.pld
