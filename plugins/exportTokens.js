@@ -2,7 +2,6 @@ const { tokenize, isColorCode, isNumber } = require("../utils/tokenizer");
 const { mapIterator } = require("../utils/utils");
 const {resolvePluginPath} = require('../utils/argParser');
 const fs = require('fs');
-const path = require('path');
 
 let outputLocation;
 let extraPlugins = [];
@@ -43,7 +42,7 @@ const afterParse = (output) => {
         } 
     }
     //check for browserify
-    if (fs && fs.writeFileSync) fs.writeFileSync(outputLocation, Array.from(strings).join('\n'));
+    if (!process.browser) fs.writeFileSync(outputLocation, Array.from(strings).join('\n'));
     else return Array.from(strings).join('\n');
 }
 

@@ -7,7 +7,9 @@
     "toJson": "node .\\toJson.js \"..\\eden\\eden 5.8h\\korean 5.8h_un.w3x\" \"..\\eden\\eden 5.8f\\eng 5.8f_un.w3x\" \"..\\eden\\eden 5.8f\\korean 5.8f_un.w3x\" .\\data\\output.yaml ignorePlayers.js ignoreStrings.js setChanged.js setKorean.js guessTranslations.js setOnlySpacingDiff.js setUntranslated.js exportTokens.js .\\data\\tokens.txt koreanExportToken",
     "toWar": "node .\\toWar.js .\\data\\output.yaml .\\data",
     "update": "node .\\update.js .\\data\\output.yaml .\\plugins\\importTokens.js .\\data\\tokens.txt .\\data\\translated_tokens.txt .\\plugins\\koreanExportToken .\\plugins\\setUntranslated.js",
-    "protected": "node .\\toJson.js ..\\translations\\upgrade-slave\\6.4d\\Upgrade_RPG_6.4D_Reporged.w3x ..\\translations\\upgrade-slave\\6.2e\\Upgrade_RPG_6.2E_Reporged_eng_test.w3x ..\\translations\\upgrade-slave\\6.2e\\Upgrade_RPG_6.2E_Reporged.w3x .\\data\\output.yaml reuseTranslations.js ..\\translations\\upgrade-slave\\ignorePlayers.js"
+    "protected": "node .\\toJson.js ..\\translations\\upgrade-slave\\6.4d\\Upgrade_RPG_6.4D_Reporged.w3x ..\\translations\\upgrade-slave\\6.2e\\Upgrade_RPG_6.2E_Reporged_eng_test.w3x ..\\translations\\upgrade-slave\\6.2e\\Upgrade_RPG_6.2E_Reporged.w3x .\\data\\output.yaml reuseTranslations.js ..\\translations\\upgrade-slave\\ignorePlayers.js",
+    "install-browserify": "npm install --no-save brfs-node-15 browserify@17.0.0",
+    "build": "browserify -t brfs-node-15 scripts/exportBrowser.js -o data/mpq.js"
   },
   "author": "juvian",
   "repository": "github:juvian/wc3-translate",
