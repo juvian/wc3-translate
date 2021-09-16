@@ -1,11 +1,8 @@
 const {filesToProcess} = require('../config');
 const path = require('path');
 const fs = require('fs');
-const { FS, MPQ } = require('@wowserhq/stormjs');
+const { FS, MPQ } = require('@ldcv/stormjs');
 const {isMPQ} = require('./argParser');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
-const commandExists = require('command-exists').sync;
 const {replaceHex} = require('../utils/utils');
 const {quotesRegex} = require('../utils/tokenizer');
 
@@ -26,6 +23,12 @@ class Map {
         }
 
         this.usedStrings = new Set();
+    }
+
+    static fromMPQ(mpq) {
+        const map = new Map("fake.mpq");
+        map.mpq = mpq;
+        return map;
     }
 
     parseFiles(files) {
@@ -53,7 +56,11 @@ class Map {
     }
 
     hasFile(name) {
-        return this.isMPQ ? this.mpq.hasFile(name.replace(/\//g, '\\')) : fs.existsSync(path.join(this.location, name));
+        return name && (this.isMPQ ? this.mpq.hasFile(this.cleanName(name)) : fs.existsSync(path.join(this.location, name)));
+    }
+
+    cleanName(file) {
+        return file != null ? file.replace(/\//g, '\\') : null;
     }
 
     getScript() {
@@ -77,7 +84,7 @@ class Map {
             
             if (this.hasFile(file)) {
                 if (this.mpq) {
-                    const f = this.mpq.openFile(file.replace(/\//g, '\\'));
+                    const f = this.mpq.openFile(this.cleanName(file));
                     buffer = Buffer.from(f.read());
                     f.close();
                 } else {
@@ -135,6 +142,10 @@ class Map {
     }
 
     async validateScript(script) {
+        const util = require('util');
+        const exec = util.promisify(require('child_process').exec);
+        const commandExists = require('command-exists').sync;
+
         const exists = commandExists(path.join(__dirname, '../pjass'));
 
         if (!exists) {

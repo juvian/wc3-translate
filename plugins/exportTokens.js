@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 let outputLocation;
-let extraPlugins;
+let extraPlugins = [];
 
 const init = (plugin) => {
     if (plugin.args.length < 1) throw Error('exportTokens plugin requires a path to output');
@@ -33,7 +33,7 @@ const afterParse = (output) => {
     for (const {data} of mapIterator(output)) {
         const shouldTranslate = extraPlugins.every(p => !p.module.shouldTranslateData || p.module.shouldTranslateData(data));
         if (shouldTranslate) {
-            if (data.hasOwnProperty('importFails') == false) {
+            if (data.hasOwnProperty('importFails') == false && !data.importedTokens) {
                 const tokens = tokenize(data.newUntranslated);
                 const strs = processTokens(tokens).filter(s => extraPlugins.every(p => p.module.shouldTranslateString(s)));
                 strs.forEach(s => strings.add(s));
@@ -42,8 +42,9 @@ const afterParse = (output) => {
             }
         } 
     }
-
-    fs.writeFileSync(outputLocation, Array.from(strings).join('\n'));
+    //check for browserify
+    if (fs && fs.writeFileSync) fs.writeFileSync(outputLocation, Array.from(strings).join('\n'));
+    else return Array.from(strings).join('\n');
 }
 
 module.exports = {init, afterParse, processTokens};

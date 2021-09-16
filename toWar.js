@@ -6,17 +6,7 @@ const Map = require('./utils/map');
 const {parseArgs} = require('./utils/argParser');
 const {iterateBufferStrings, safeEscapeDoubleQuotes} = require('./utils/tokenizer');
 
-async function main() {
-    const args = await parseArgs(process.argv.slice(2));
-    const inputLocation = args.find(a => a.type == 'output').arg;
-    const outputLocation = args.find(a => a.type == 'folder')?.arg;
-
-    const input = deserialize(path.extname(inputLocation), fs.readFileSync(inputLocation));
-    const map = new Map(input.metadata.maps[0].location);
-
-    await map.mount();
-    map.parseFiles();
-    
+function exportToWar(map, input, outputLocation) {
     for (const [name, file] of Object.entries(filesToProcess)) {
         if (Object.keys(map[file.name]) == 0) continue;
 
@@ -90,7 +80,7 @@ async function main() {
             newScript.push(map.script.slice(lastIdx));
 
             map.script = {buffer: Buffer.concat(newScript)};
-
+            
             map.validateScript(map.script.buffer);
         } else if (name == "war3map.wts") {
             for (const key of Object.keys(map.strings)) {
@@ -125,4 +115,22 @@ async function main() {
     }
 }
 
-main();
+async function main() {
+    const args = await parseArgs(process.argv.slice(2));
+    const inputLocation = args.find(a => a.type == 'output').arg;
+    const outputLocation = args.find(a => a.type == 'folder')?.arg;
+
+    const input = deserialize(path.extname(inputLocation), fs.readFileSync(inputLocation));
+    const map = new Map(input.metadata.maps[0].location);
+
+    await map.mount();
+    map.parseFiles();
+    
+    exportToWar(map, input, outputLocation);
+}
+
+if (typeof require !== 'undefined' && require.main === module) {
+    main();
+}
+
+module.exports = {exportToWar};

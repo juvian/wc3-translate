@@ -17,9 +17,9 @@ const init = (plugin) => {
     extraPlugins.forEach(a => a.module = require(resolvePluginPath(a.arg + '.js')));
 }
 
-const afterParse = (output) => {
-    const untranslatedTokens = fs.readFileSync(tokensLocation).toString().trimEnd().split('\n');
-    const translatedTokens = fs.readFileSync(translatedTokensLocation).toString().trimEnd().split('\n');
+const afterParse = (output, t1, t2) => {
+    const untranslatedTokens = t1 || fs.readFileSync(tokensLocation).toString().trimEnd().split('\n');
+    const translatedTokens = t2 || fs.readFileSync(translatedTokensLocation).toString().trimEnd().split('\n');
 
     if (untranslatedTokens.length != translatedTokens.length) throw Error("translatedTokens and untranslatedTokens files have different length")
 
