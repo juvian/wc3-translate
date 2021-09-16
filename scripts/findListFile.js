@@ -5,20 +5,22 @@ const {fileRegex} = require('../utils/tokenizer');
 const path = require('path');
 
 const shouldScan = (file) => {
-    return file.endsWith('mdx') || file.includes('war3map') || file.endsWith('.toc') || file.endsWith('.fdf');
+    return file.match(/\.(mdx|toc|fdf|txt)$|/i) || file.includes('war3map');
 }
 
 const checkFile = (map, file, seen, foundFiles) => {
-    if (seen.has(file) || !file.trim()) return;
+    if (seen.has(file.toLowerCase()) || !file.trim()) return;
 
-    seen.add(file);
-
+    seen.add(file.toLowerCase());
     if (map.hasFile(file)) {
         foundFiles.add(file);
         if (shouldScan(file)) scanFile(map, file, seen, foundFiles);
     }
 
-    if (file.endsWith('.mdx')) checkFile(map, file.slice(-4) + '_portrait.mdx', seen, foundFiles);
+    if (file.toLowerCase().endsWith('.mdx') && file.includes('_portrait') == false) {
+        checkFile(map, file.slice(0, -4) + '_portrait.mdx', seen, foundFiles);
+        checkFile(map, file.slice(0, -4) + '.blp', seen, foundFiles);
+    }
 }
 
 const checkFiles = (map, files, seen, foundFiles) => {
@@ -26,9 +28,10 @@ const checkFiles = (map, files, seen, foundFiles) => {
 }
 
 const fileSeparator = (file) => {
-    if (file.endsWith('war3map.j') || file.endsWith('war3map.lua') || file.endsWith('.fdf')) return '"';
+    file = file.toLowerCase();
+    if (file.endsWith('war3map.j') || file.endsWith('war3map.lua') || file.endsWith('.fdf') || file.endsWith(".slk")) return '"';
     if (file.endsWith('.txt')) return '=';
-    if (file.endsWith('.toc')) return '\n';
+    if (file.endsWith('.toc') || file.endsWith('.txt')) return '\n';
     return '\0';
 }
 
@@ -47,7 +50,7 @@ const solveParts = (parts, idx, options = new Set()) => {
 }
 
 //try to replace variables to solve "UI\\"+VHv+"A.tga" case
-solveAdditions = function(str, idx, newFile) {
+const solveAdditions = function(str, idx, newFile) {
     if (solveAdditions.variableOptions == null) {
         solveAdditions.variableOptions = {};
 
@@ -94,9 +97,10 @@ const scanFile = (map, file, seen, foundFiles) => {
         if (file == '(listfile)') checkFiles(map, str.split(/\r\n/), seen, foundFiles);
         else {
             const separator = fileSeparator(file);
+            if (str.includes('Whangchung')) console.log(file)
             for (const candidate of str.matchAll(fileRegex)) {
                 const idx = str.lastIndexOf(separator, candidate.index);
-                const newFile = str.substring(idx + 1, candidate.index + candidate[0].length).replace(/\.mdl$/, '.mdx').replace(/\\+/g, '\\');
+                const newFile = str.substring(idx + 1, candidate.index + candidate[0].length).replace(/\.mdl$/i, '.mdx').replace(/\\+/g, '\\');
                 checkFile(map, newFile, seen, foundFiles);
 
                 if ((file.endsWith('war3map.j') || file.endsWith('war3map.lua')) && foundFiles.has(newFile) == false) {
@@ -155,4 +159,8 @@ async function main() {
     }
 }
 
-main();
+if (typeof require !== 'undefined' && require.main === module) {
+    main();
+}
+
+module.exports = {checkFiles};
