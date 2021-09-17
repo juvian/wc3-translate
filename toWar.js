@@ -5,6 +5,7 @@ const {deserialize, interfaceIterator} = require('./utils/utils');
 const Map = require('./utils/map');
 const {parseArgs} = require('./utils/argParser');
 const {iterateBufferStrings, fixString} = require('./utils/tokenizer');
+const fixEventDamaged = require('./scripts/replacePgProtected');
 
 function exportToWar(map, input, outputLocation) {
     for (const [name, file] of Object.entries(filesToProcess)) {
@@ -44,6 +45,8 @@ function exportToWar(map, input, outputLocation) {
         } else if (name == "war3map.j") {            
             let newScript = [];
             let lastIdx = 0;
+
+            map.script = fixEventDamaged(map.script);
 
             for (const {str, beganAt, idx} of iterateBufferStrings(map.script)) {
                 const val = map.getString(str).toString().replace(/\r\n/g, '\n');

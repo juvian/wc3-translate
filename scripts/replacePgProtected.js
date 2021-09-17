@@ -1,18 +1,23 @@
-const fs = require('fs');
+//replaces fromString in map and puts toString instead. Uses buffer to avoid breaking utf-8 protected maps
 
-const code = fs.readFileSync('../data/war3map.j');
+module.exports = function(buffer, fromString = 'EVENT_PLAYER_UNIT_DAMAGED', toString = 'EVENT_PLAYER_UNIT_DAMAGED_CUSTOM') {
+    let newScript = [];
+    let lastIdx = 0;
+    let idx = buffer.indexOf(Buffer.from(fromString));
+    
+    while (idx != -1) {
+        newScript.push(buffer.slice(lastIdx, idx));
+        newScript.push(Buffer.from(toString));
+        lastIdx = idx + Buffer.from(fromString).length;
+        idx = buffer.indexOf(Buffer.from(fromString), lastIdx);
+    }
 
-const insertCodeAfter = 'function main takes nothing returns nothing';
-const insertCodeAfterBuffer = Buffer.from(insertCodeAfter);
+    if (newScript.length) {
+        newScript.push(buffer.slice(lastIdx));
+        buffer = Buffer.concat(newScript);
+        newScript = [];
+        lastIdx = 0;
+    }
 
-const codeToInsert = `\nlocal integer s = 4`;
-
-const idx = code.indexOf(insertCodeAfterBuffer);
-
-if (idx == -1) throw "code not found";
-
-const newCode = Buffer.concat([code.slice(0, idx), insertCodeAfterBuffer, Buffer.from(codeToInsert), code.slice(idx + insertCodeAfterBuffer.length)]);
-
-fs.writeFileSync('../data/war3map_edited.j', newCode);
-
-
+    return buffer;
+}
