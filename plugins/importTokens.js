@@ -1,4 +1,4 @@
-const { tokenize, isColorCode, isNumber } = require("../utils/tokenizer");
+const { tokenize, isColorCode, isNumber, fixString } = require("../utils/tokenizer");
 const { mapIterator } = require("../utils/utils");
 const fs = require('fs');
 const path = require('path');
@@ -26,7 +26,7 @@ const afterParse = (output, t1, t2) => {
     const translations = {};
 
     for (let i = 0; i < translatedTokens.length; i++) {
-        translations[untranslatedTokens[i]] = translatedTokens[i];
+        translations[untranslatedTokens[i]] = fixString(translatedTokens[i]);
     }
 
     for (const {data} of mapIterator(output)) {

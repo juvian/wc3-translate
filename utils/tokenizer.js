@@ -43,13 +43,29 @@ function *iterateBufferStrings(buf) {
     }
 }
 
-// NOTE: only escapes a " if it's not already escaped
-function safeEscapeDoubleQuotes(str) {
-	return str.replace(/\\([\s\S])|(")/g,"\\$1$2"); 
+//resolves conflicts such as an unescaped ", a \ that does not escape and such
+function fixString(str) {
+    str = str.split('\\ r').join('\r').split('\\ n').join('\n').split('| r').join('|r').replace(/\| n/gi, '|n').replace(/n \|/gi, 'n|').replace(/\| (c[0-9a-f]{8})/gi, '|$1');
+    if (!str.match(/["\\]/)) return str;
+    
+    let fixed = "";
+    let escaping = false;
+
+    for (let i = 0; i < str.length; i++) {
+        if (str[i] == '\\' && !escaping && i + 1 < str.length && str[i + 1] != '\\' && str[i + 1] != '"') continue;
+        if (str[i] == '"') {
+            if (escaping) escaping = false;
+            else fixed += '\\';
+        } else if (str[i] == '\\') escaping = !escaping;
+        
+        fixed += str[i];
+    }
+
+    return fixed;
 }
 
 const koreanRegex = /[\u3131-\uea60]/;
 const quotesRegex = /"((?:\\.|[^"\\])*)"/g;
 const fileRegex = /\.(blp|mdx|mp3|mdl|tga|dds|wav|slk|txt|toc|fdf)/gi
 
-module.exports = {tokenize, isColorCode, isNumber, koreanRegex, quotesRegex, fileRegex, iterateBufferStrings, safeEscapeDoubleQuotes}
+module.exports = {tokenize, isColorCode, isNumber, koreanRegex, quotesRegex, fileRegex, iterateBufferStrings, fixString}

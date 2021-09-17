@@ -1,5 +1,5 @@
 global.window.FS = require('@ldcv/stormjs').FS;
-global.window.MPQ = require('@ldcv/stormjs').MOQ;
+global.window.MPQ = require('@ldcv/stormjs').MPQ;
 global.window.tokenizer = require('../utils/tokenizer');;
 global.window.listfile = require('fs').readFileSync('utils/listfile.txt').toString().split(/\r?\n/);
 global.window.Maps = require('../utils/maps');

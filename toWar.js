@@ -4,7 +4,7 @@ const path = require('path');
 const {deserialize, interfaceIterator} = require('./utils/utils');
 const Map = require('./utils/map');
 const {parseArgs} = require('./utils/argParser');
-const {iterateBufferStrings, safeEscapeDoubleQuotes} = require('./utils/tokenizer');
+const {iterateBufferStrings, fixString} = require('./utils/tokenizer');
 
 function exportToWar(map, input, outputLocation) {
     for (const [name, file] of Object.entries(filesToProcess)) {
@@ -49,7 +49,7 @@ function exportToWar(map, input, outputLocation) {
                 const val = map.getString(str).toString().replace(/\r\n/g, '\n');
                 let replacement = input.script[val]?.newTranslated || input.script[val]?.oldTranslated;
                 if (replacement != null) {
-                    replacement = safeEscapeDoubleQuotes(replacement).split('\n').join('\\n');
+                    replacement = fixString(replacement).split('\n').join('\\n');
 
                     newScript.push(map.script.slice(lastIdx, beganAt));
 
