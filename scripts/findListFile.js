@@ -115,6 +115,14 @@ const scanFile = (map, file, seen, foundFiles) => {
     }
 }
 
+function scanMap(map, files, foundFiles) {
+    for (const locale of [0x409, 0x412, 0x809, 0x40c, 0x407, 0x40a, 0x410, 0x405, 0x419, 0x415, 0x416, 0x816, 0x41f, 0x411, 0x404, 0x804, 0x41e]) {
+        if (map.isMPQ) map.mpq.locale(locale);
+        checkFiles(map, files, new Set(), foundFiles);
+        if (!map.isMPQ || foundFiles.size > 0) break;
+    }
+}
+
 async function main() {
     const args = await parseArgs(process.argv.slice(2));
     const mapLocation = args[0].arg;
@@ -133,9 +141,8 @@ async function main() {
     await map.mount();
 
     const foundFiles = new Set();
-    const seen = new Set();
     
-    checkFiles(map, files, seen, foundFiles);
+    scanMap(map, files, foundFiles);
 
     console.log("found " + foundFiles.size + " files");
 
@@ -163,4 +170,4 @@ if (typeof require !== 'undefined' && require.main === module) {
     main();
 }
 
-module.exports = {checkFiles};
+module.exports = {checkFiles, scanMap};
