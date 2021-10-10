@@ -7,13 +7,20 @@ const {parseArgs} = require('./utils/argParser');
 const {iterateBufferStrings, fixString} = require('./utils/tokenizer');
 const fixEventDamaged = require('./scripts/replacePgProtected');
 
+function saveInWts(map, val, id) {
+    console.warn(id + ' too long, saving in wts ');
+    let key = Object.keys(map.strings).length + 1;
+    while (map.strings.hasOwnProperty(key)) key++;
+    map.strings[key] = val.replace(/\}/g, '|');
+    return 'TRIGSTR_' + key;
+}
+
 function exportToWar(map, input, outputLocation) {
     for (const [name, file] of Object.entries(filesToProcess)) {
         if (Object.keys(map[file.name]) == 0) continue;
 
         if (file.props) {
             const reversedProps = Object.fromEntries(Object.entries(file.props).map(arr => [arr[1], arr[0]]));
-
             for (const [id, props] of Object.entries(input[file.name])) {
                 const obj = [map[file.name].custom, map[file.name].original].find(o => o != null && o.hasOwnProperty(id));
                 if (obj == null) continue;
@@ -37,7 +44,11 @@ function exportToWar(map, input, outputLocation) {
                         const val = translations[modification.id][currentIdx[modification.id]++];
                         
                         if (val != null) {
-                            modification.value = val;
+                            if (val.length > 500 && Buffer.byteLength(val, 'utf8') >= 1023) {
+                                modification.value = saveInWts(map, val, id + ':' + modification.id);
+                            } else {
+                                modification.value = val
+                            }
                         }
                     }
                 }

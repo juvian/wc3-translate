@@ -21,13 +21,6 @@ const filesToProcess = {
         props: {"unam": "name", "upro": "properNames", "uawt": "awakenTip", "utip": "tip", "utub": "uberTip", "utpr": "reviveTip"},
         ignore: ["unsf"]
     },
-    "war3map.wts": {
-        name: "strings",
-        toJson: Translator.Strings.warToJson,
-        toWar: Translator.Strings.jsonToWar,
-        afterParse: false,
-        empty: {}
-    },
     "war3map.w3a": {
         name: "abilities",
         props: {"aub1": "uberTip", "anam": "name", "atp1": "tip", "aret": "researchTip", "arut": "researchUberTip", "aut1": "unTip", "auu1": "unUberTip"},
@@ -75,7 +68,14 @@ const filesToProcess = {
         afterParse: false,
         empty: {},
         ignore: ["Terrain", "WorldEditMisc", "WorldEditStrings", "CustomSkin"]
-    }
+    },
+    "war3map.wts": {
+        name: "strings",
+        toJson: Translator.Strings.warToJson,
+        toWar: Translator.Strings.jsonToWar,
+        afterParse: false,
+        empty: {}
+    },
 }
 
 
