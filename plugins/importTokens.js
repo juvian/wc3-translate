@@ -27,7 +27,7 @@ const afterParse = (output, t1, t2) => {
 
     for (let i = 0; i < translatedTokens.length; i++) {//ignore if only spaces changed
         if (untranslatedTokens[i].replace(/\s/g, '') != translatedTokens[i].replace(/\s/g, '')) {
-            translations[untranslatedTokens[i]] = fixString(translatedTokens[i]);
+            translations[untranslatedTokens[i]] = translatedTokens[i];
         }
     }
 
@@ -35,7 +35,7 @@ const afterParse = (output, t1, t2) => {
         const shouldTranslate = !data.importedTokens && extraPlugins.every(p => !p.module.shouldTranslateData || p.module.shouldTranslateData(data));
         if (shouldTranslate) {
             if (data.importFails == 1) {
-                data.newTranslated = data.newUntranslated.split('\n').map(l => translations[l]).join('\n');
+                data.newTranslated = fixString(data.newUntranslated.split('\n').map(l => translations[l]).join('\n'));
                 data.importedTokens = true;
                 continue;
             }
@@ -71,7 +71,7 @@ const afterParse = (output, t1, t2) => {
             if (inconsistent) {
                 data.importFails = (data.importFails || 0) + 1;
             } else {
-                data.newTranslated = translated.join('\n');
+                data.newTranslated = fixString(translated.join('\n'));
                 data.importedTokens = true;
             }
         }
