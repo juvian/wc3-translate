@@ -62,30 +62,10 @@ function exportToWar(map, input, outputLocation) {
             for (const {str, beganAt, idx} of iterateBufferStrings(map.script)) {
                 const val = map.getString(str).toString().replace(/\r\n/g, '\n');
                 let replacement = input.script[val]?.newTranslated || input.script[val]?.oldTranslated;
+
                 if (replacement != null) {
-                    replacement = fixString(replacement).split('\n').join('\\n');
-
                     newScript.push(map.script.slice(lastIdx, beganAt));
-
-                    //strings with 1023 byte length crash wc3 in 1.28, concatenation works up to 4029...
-                    if (replacement.length > 500 && Buffer.byteLength(replacement, 'utf8') >= 1023) {
-                        console.warn('replacement too long, will attempt to fix');
-
-                        let splitted = "";
-                        let i = 0;
-                        
-                        while(i < replacement.length) {
-                            let until = i + 500;
-                            while (replacement[until] == '\\') until--;
-                            splitted += '"' + replacement.substring(i, until) + '" + ';
-                            i = until;
-                        }
-
-                        replacement = splitted.substring(0, splitted.length - 2);
-                    } else {
-                        replacement = '"' + replacement + '"';
-                    }
-
+                    replacement = fixReplacement(replacement);
                     newScript.push(Buffer.from(replacement));
                     lastIdx = idx + 1;
                 }
@@ -127,6 +107,30 @@ function exportToWar(map, input, outputLocation) {
 
         map.writeWar(name, file, outputLocation);
     }
+}
+
+const fixReplacement = function(replacement) {
+    replacement = fixString(replacement).split('\n').join('\\n');
+    //strings with 1023 byte length crash wc3 in 1.28, concatenation works up to 4029...
+    if (replacement.length > 500 && Buffer.byteLength(replacement, 'utf8') >= 1023) {
+        console.warn('replacement too long, will attempt to fix');
+
+        let splitted = "";
+        let i = 0;
+        
+        while(i < replacement.length) {
+            let until = i + 500;
+            while (replacement[until - 1] == '\\') until--;
+            splitted += '"' + replacement.substring(i, until) + '" + ';
+            i = until;
+        }
+
+        replacement = splitted.substring(0, splitted.length - 2);
+    } else {
+        replacement = '"' + replacement + '"';
+    }
+
+    return replacement;
 }
 
 async function main() {
