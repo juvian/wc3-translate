@@ -101,6 +101,9 @@ Check [here](/data/protection.md)
 ## SLK to OBJ format
 Check [this video from Magepowers](https://www.youtube.com/watch?v=KYqyT8sZrzI). You might need to combine it with deprotection if map is read only
 
+## Map breaks on editing war3map.j
+Some maps are edit protected making most text editor break script when saving. Notepad++ and [hexit](hexed) work to edit those.
+
 # Misc
 If you have any doubts feel free to ask in [Wc3 Translators United](https://discord.gg/QEPuPFB8jY) discord server.
 There is [an example](/scripts/replacePgProtected.js) on how to edit a script on a pg protected map which would break using a text editor.
