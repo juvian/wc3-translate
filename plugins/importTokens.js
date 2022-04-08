@@ -25,8 +25,8 @@ const afterParse = (output, t1, t2) => {
 
     const translations = {};
 
-    for (let i = 0; i < translatedTokens.length; i++) {//ignore if only spaces changed
-        if (untranslatedTokens[i].replace(/\s/g, '') != translatedTokens[i].replace(/\s/g, '')) {
+    for (let i = 0; i < translatedTokens.length; i++) {//ignore if only spaces or casing changed
+        if (untranslatedTokens[i].replace(/\s/g, '').toLowerCase() != translatedTokens[i].replace(/\s/g, '').toLowerCase()) {
             translations[untranslatedTokens[i]] = translatedTokens[i];
         }
     }
