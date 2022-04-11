@@ -10,3 +10,4 @@ global.window.deserialize = require('../utils/utils').deserialize;
 global.window.exportTokens = require('../plugins/exportTokens');
 global.window.importTokens = require('../plugins/importTokens');
 global.window.exportToWar = require('../toWar').exportToWar;
+global.window.filesToExport = require('../config.js');
