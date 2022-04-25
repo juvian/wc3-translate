@@ -15,6 +15,12 @@ function saveInWts(map, val, id) {
     return 'TRIGSTR_' + key;
 }
 
+function getVal(translation, map, id) {
+    const val = translation.newTranslated || translation.oldTranslated;
+    if (val && val.length > 500 && Buffer.byteLength(val, 'utf8') >= 1023) return saveInWts(map, val, id);
+    return val;
+}
+
 function exportToWar(map, input, outputLocation) {
     for (const [name, file] of Object.entries(filesToProcess)) {
         if (Object.keys(map[file.name]) == 0) continue;
@@ -35,21 +41,13 @@ function exportToWar(map, input, outputLocation) {
                     currentIdx[reversedProp] = 0;
 
                     for (const info of levels) {
-                        translations[reversedProp].push(info.newTranslated || info.oldTranslated);
+                        translations[reversedProp].push(getVal(info, map, id + ':' + reversedProp));
                     }
                 }
 
                 for (const modification of obj[id]) {
                     if (currentIdx.hasOwnProperty(modification.id)) {
-                        const val = translations[modification.id][currentIdx[modification.id]++];
-                        
-                        if (val != null) {
-                            if (val.length > 500 && Buffer.byteLength(val, 'utf8') >= 1023) {
-                                modification.value = saveInWts(map, val, id + ':' + modification.id);
-                            } else {
-                                modification.value = val
-                            }
-                        }
+                        modification.value = translations[modification.id][currentIdx[modification.id]++];
                     }
                 }
             }
@@ -82,20 +80,20 @@ function exportToWar(map, input, outputLocation) {
             }
         } else if (name == "war3map.w3i") {   
             for (const prop of ["name", "author", "description", "recommendedPlayers"]) {
-                map.info.map[prop] = input.info[prop].newTranslated || input.info[prop].oldTranslated || map.info.map[prop];
+                map.info.map[prop] = getVal(input.info[prop], map, prop) || map.info.map[prop];
             }
 
             for (const [idx, player] of Object.entries(map.info.players)) {
-                player.name = input.info.players[idx].name.newTranslated || input.info.players[idx].name.oldTranslated || player.name;
+                player.name = getVal(input.info.players[idx].name, map, "player" + idx) || player.name;
             }
 
             for (const [idx, force] of Object.entries(map.info.forces)) {
-                force.name = input.info.forces[idx].name.newTranslated || input.info.forces[idx].name.oldTranslated || force.name;
+                force.name = getVal(input.info.forces[idx].name, map, "force" + idx) || force.name;
             }
 
             for (const parent of ["loadingScreen", "prologue"]) {
                 for (const id of Object.keys(input.info[parent])) {
-                    map.info[parent][id] = input.info[parent][id].newTranslated || input.info[parent][id].oldTranslated || map.info[parent][id]; 
+                    map.info[parent][id] = getVal(input.info[parent][id], map, parent + ":" + id) || map.info[parent][id]; 
                 }
             }
         } else if (name == "war3mapSkin.txt") {
