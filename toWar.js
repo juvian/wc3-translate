@@ -47,7 +47,7 @@ function exportToWar(map, input, outputLocation) {
 
                 for (const modification of obj[id]) {
                     if (currentIdx.hasOwnProperty(modification.id)) {
-                        modification.value = translations[modification.id][currentIdx[modification.id]++];
+                        modification.value = translations[modification.id][currentIdx[modification.id]++] || modification.value;
                     }
                 }
             }
