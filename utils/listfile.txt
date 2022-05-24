@@ -102,3 +102,4 @@ scripts\HumanMelee.pld
 scripts\NightElfMelee.pld
 scripts\OrcMelee.pld
 scripts\UndeadMelee.pld
+Units\CommandStrings.txt

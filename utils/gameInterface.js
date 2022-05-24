@@ -2,16 +2,16 @@ const toJson = (buffer) => {
     const result = {};
     let currentCategory;
     let currentToken;
-    let currentString;
+    let currentString = "";
 
     let parsingStr = false;
     
     for (let line of buffer.toString().split(/[\r\n]+/)) {
         if (!parsingStr) {
-            if (line.startsWith('[')) {
+            if (line.trim().startsWith('[')) {
                 currentCategory = line.split('[')[1].split(']')[0];
                 result[currentCategory] = {};
-            } else {
+            } else if (line.startsWith('//') == false) {
                 const idx = line.indexOf('=');
                 currentToken = line.substring(0, idx).trim();
                 line = line.substring(idx + 1).trim();

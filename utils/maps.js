@@ -34,7 +34,8 @@ module.exports = class Maps {
         output.info = this.processInfo();
         output.script = this.processScript();
         output.strings = this.processStrings();
-        output.interface = this.processInterface();
+        output.interface = this.processTxt("war3mapSkin.txt");
+        output.customStrings = this.processTxt("units/CommandStrings.txt");
 
         output.metadata = {
             maps: this.maps.map(m => ({location: m.location == null ? null : path.resolve(m.location)}))
@@ -88,15 +89,14 @@ module.exports = class Maps {
         return result;
     }
 
-    processInterface() {
+    processTxt(fileName) {
         const result = {};
-        
-        for (const [key, obj] of Object.entries(this.newUntranslated.interface)) {
+        for (const [key, obj] of Object.entries(this.newUntranslated[filesToProcess[fileName].name])) {
             for (const prop of Object.keys(obj)) {
                 for (const map of this.maps) {
-                    const val = map.getString(map.interface?.[key]?.[prop]);
+                    const val = map.getString(map[filesToProcess[fileName].name]?.[key]?.[prop]);
 
-                    if (val && !filesToProcess["war3mapSkin.txt"].ignore.includes(key)) {
+                    if (val && !filesToProcess[fileName].ignore.includes(key)) {
                         result[key] = result[key] || {};
                         result[key][prop] = result[key][prop] || {};
                         result[key][prop][map.name] = val;
@@ -105,7 +105,6 @@ module.exports = class Maps {
             }
         }
         
-
         return result;
     }
 

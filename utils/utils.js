@@ -42,10 +42,10 @@ function* infoIterator(info) {
   }
 }
 
-function* interfaceIterator(interface) {
+function* interfaceIterator(interface, type) {
   for (const [parentId, obj] of Object.entries(interface || {})) {
     for (const [id, data] of Object.entries(obj)) {
-      yield {data, id, type: "interface", parent: obj, parentId};
+      yield {data, id, type, parent: obj, parentId};
     }
   }
 }
@@ -54,7 +54,7 @@ function* mapIterator(map) {
   for (const [id, file] of Object.entries(filesToProcess)) {
     if (file.props) yield* objectIterator(map[file.name], file.name);
     else if (id == "war3map.w3i") yield* infoIterator(map[file.name], file.name);
-    else if (id == "war3mapSkin.txt") yield* interfaceIterator(map[file.name]);
+    else if (id == "war3mapSkin.txt" || id == "units/CommandStrings.txt") yield* interfaceIterator(map[file.name], file.name);
     else yield* stringsIterator(map[file.name]);
   }
 }

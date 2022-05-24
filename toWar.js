@@ -96,7 +96,7 @@ function exportToWar(map, input, outputLocation) {
                     map.info[parent][id] = getVal(input.info[parent][id], map, parent + ":" + id) || map.info[parent][id]; 
                 }
             }
-        } else if (name == "war3mapSkin.txt") {
+        } else if (name == "war3mapSkin.txt" || name == "units/CommandStrings.txt") {
             for (const {id, parentId, data} of interfaceIterator(input[file.name])) {
                 const val = data?.newTranslated || data?.oldTranslated;
                 map[file.name][parentId][id] = val || map[file.name][parentId][id] ;
