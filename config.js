@@ -76,7 +76,7 @@ const filesToProcess = {
         afterParse: false,
         empty: {}
     },
-    "units/CommandStrings.txt": {
+    "units\\CommandStrings.txt": {
         name: "commandStrings",
         toJson: interface.toJson,
         toWar: interface.toWar,

@@ -134,8 +134,8 @@ class Map {
 
         const folderPath = outputLocation || path.join(this.isMPQ ? path.join(path.resolve(this.location), '..') : this.location, "translated");
 
-        if (!fs.existsSync(path.join(folderPath))){
-            fs.mkdirSync(path.join(folderPath), {recursive:true});
+        if (!fs.existsSync(path.dirname(path.join(folderPath, name)))){
+            fs.mkdirSync(path.dirname(path.join(folderPath, name)), {recursive:true});
         }
 
         fs.writeFileSync(path.join(folderPath, name), toWar.buffer || toWar);

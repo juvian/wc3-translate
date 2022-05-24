@@ -35,7 +35,7 @@ module.exports = class Maps {
         output.script = this.processScript();
         output.strings = this.processStrings();
         output.interface = this.processTxt("war3mapSkin.txt");
-        output.customStrings = this.processTxt("units/CommandStrings.txt");
+        output.commandStrings = this.processTxt("units\\CommandStrings.txt");
 
         output.metadata = {
             maps: this.maps.map(m => ({location: m.location == null ? null : path.resolve(m.location)}))
