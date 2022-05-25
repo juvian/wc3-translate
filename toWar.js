@@ -107,7 +107,7 @@ function exportToWar(map, input, outputLocation) {
 }
 
 const fixReplacement = function(replacement) {
-    replacement = fixString(replacement).split('\n').join('\\n');
+    replacement = fixString(replacement, true).split('\n').join('\\n');
     //strings with 1023 byte length crash wc3 in 1.28, concatenation works up to 4029...
     if (replacement.length > 500 && Buffer.byteLength(replacement, 'utf8') >= 1023) {
         console.warn('replacement too long, will attempt to fix');

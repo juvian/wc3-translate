@@ -44,9 +44,9 @@ function *iterateBufferStrings(buf) {
 }
 
 //resolves conflicts such as an unescaped ", a \ that does not escape and such
-function fixString(str) {
+function fixString(str, fixEscape) {
     str = str.split('\\ r').join('\r').split('\\ n').join('\n').split('| r').join('|r').replace(/\| n/gi, '|n').replace(/n \|/gi, 'n|').replace(/\| (c[0-9a-f]{8})/gi, '|$1');
-    if (!str.match(/["\\]/)) return str;
+    if (!str.match(/["\\]/) || !fixEscape) return str;
     
     let fixed = "";
     let escaping = false;
