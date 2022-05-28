@@ -29,6 +29,7 @@ war3map.w3a
 war3map.w3b
 war3map.w3d
 war3map.w3q
+war3map.w3h
 war3mapMisc.txt
 war3mapSkin.txt
 war3mapExtra.txt
@@ -91,8 +92,6 @@ Units\UnitWeaponsSkin.txt
 Units\AbilitySkin.txt
 Units\UpgradeSkin.txt
 Units\ItemSkin.txt
-Units\UpgradeSkin.txt
-Units\UpgradeSkin.txt
 Units\MiscData.txt
 Units\MiscGame.txt
 Ui\MiscData.txt
