@@ -27,6 +27,10 @@ const afterParse = (output, t1, t2) => {
 
     for (let i = 0; i < translatedTokens.length; i++) {//ignore if only spaces or casing changed
         if (untranslatedTokens[i].replace(/\s/g, '').toLowerCase() != translatedTokens[i].replace(/\s/g, '').toLowerCase()) {
+            //wc3 can crash if you do <random thing> instead of proper <A001,DataA1> format
+            if (translatedTokens[i].match(/<.*>/) && !untranslatedTokens[i].match(/<.*>/)) {
+                translatedTokens[i] = translatedTokens[i].replace(/</g, '(').replace(/>/g,')');
+            }
             translations[untranslatedTokens[i]] = translatedTokens[i];
         }
     }

@@ -6,3 +6,4 @@ data/*
 !data/common.j
 !data/blizzard.j
 pjass.exe
+test.js
