@@ -25,17 +25,17 @@ module.exports = class Maps {
         this.maps = [this.newUntranslated, this.oldTranslated, this.oldUntranslated];
         this.maps.forEach((m, idx) => m.name = ["newUntranslated", "oldTranslated", "oldUntranslated"][idx]);
 
-        for (const file of Object.values(filesToProcess)) {
-            if (this.newUntranslated.hasOwnProperty(file.name) && file.props) {
-                output[file.name] = new Processor(this.maps.map(m => Object.assign({}, m[file.name].original, m[file.name].custom)), this.maps, file.props, file.ignore).process();
+        for (const [name, file] of Object.entries(filesToProcess)) {
+            if (this.newUntranslated.hasOwnProperty(name) && file.props) {
+                output[name] = new Processor(this.maps.map(m => Object.assign({}, m[name].original, m[name].custom)), this.maps, file.props, file.ignore).process();
             }
         } 
 
         output.info = this.processInfo();
         output.script = this.processScript();
         output.strings = this.processStrings();
-        output.interface = this.processTxt("war3mapSkin.txt");
-        output.commandStrings = this.processTxt("units\\CommandStrings.txt");
+        output.interface = this.processTxt("interface");
+        output.commandStrings = this.processTxt("commandStrings");
 
         output.metadata = {
             maps: this.maps.map(m => ({location: m.location == null ? null : path.resolve(m.location)}))
@@ -91,10 +91,10 @@ module.exports = class Maps {
 
     processTxt(fileName) {
         const result = {};
-        for (const [key, obj] of Object.entries(this.newUntranslated[filesToProcess[fileName].name])) {
+        for (const [key, obj] of Object.entries(this.newUntranslated[fileName])) {
             for (const prop of Object.keys(obj)) {
                 for (const map of this.maps) {
-                    const val = map.getString(map[filesToProcess[fileName].name]?.[key]?.[prop]);
+                    const val = map.getString(map[fileName]?.[key]?.[prop]);
 
                     if (val && !filesToProcess[fileName].ignore.includes(key)) {
                         result[key] = result[key] || {};

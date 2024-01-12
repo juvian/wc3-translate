@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const isMPQ = (arg) => arg.endsWith('.w3x') || arg.endsWith('.w3m') || arg.endsWith('.mpq');
+const isMPQ = (arg) => arg.endsWith('.w3x') || arg.endsWith('.w3m') || arg.endsWith('.w3n') || arg.endsWith('.mpq');
 const isPlugin = (arg) => arg.endsWith('.js');
 const isOutput = (arg) => (arg.endsWith('.json') || arg.endsWith('.yaml'))
 

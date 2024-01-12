@@ -1,4 +1,4 @@
-const {filesToProcess} = require('../config');
+const {filesToProcess, pathsToName} = require('../config');
 const path = require('path');
 const fs = require('fs');
 const { FS, MPQ } = require('@ldcv/stormjs');
@@ -11,18 +11,17 @@ FS.mkdir('/maps');
 process.removeAllListeners('uncaughtException') // stormlib hides error stack
 process.removeAllListeners('unhandledRejection') // stormlib hides error stack
 
-const scripts = ['war3map.j', 'scripts/war3map.j', 'war3map.lua', 'scripts/war3map.lua'];
-
 class Map {
     constructor(loc) {   
         this.location = loc || "";
         this.isMPQ = loc && isMPQ(loc);
 
-        for (const info of Object.values(filesToProcess)) {
-            this[info.name] = info.empty;
+        for (const [name, info] of Object.entries(filesToProcess)) {
+            this[name] = info.empty;
         }
 
         this.usedStrings = new Set();
+        this.namesToFiles = {};
     }
 
     static fromMPQ(mpq) {
@@ -34,7 +33,7 @@ class Map {
     parseFiles(files) {
         for (const [buffer, file] of this.fileIterator(files)) {
             try {
-                if(buffer) this.parseFile(buffer, filesToProcess[scripts.includes(file) ? 'war3map.j' : file]);
+                if(buffer) this.parseFile(buffer, file);
             } catch(e) {
                 console.error('failed to parse ' + file + ', will skip', e)
             }
@@ -64,16 +63,15 @@ class Map {
     }
 
     getScript() {
-        return scripts.find(f => this.hasFile(f));
+        return filesToProcess['script'].paths.find(f => this.hasFile(f));
     }
 
     *fileIterator(files) {
         if (!this.location) return;
 
-        files = files || Object.keys(filesToProcess);
+        files = files || [].concat.apply([], Object.values(filesToProcess).map(f => f.paths));
 
         for (let file of files) {
-            if (file == "war3map.j") file = this.getScript();
             yield [this.readFile(file), file];
         }
     }
@@ -98,17 +96,19 @@ class Map {
         }
     }
 
-    parseFile(buffer, info) {
-        const parsed = info.toJson(buffer);
+    parseFile(buffer, file) {
+        const name = pathsToName[file];
+        const parsed = filesToProcess[name].toJson(buffer);
 
-        if (parsed.errors && parsed.errors.length) console.warn('errors parsing ' + info.name, parsed.errors);
+        if (parsed.errors && parsed.errors.length) console.warn('errors parsing ' + name, parsed.errors);
 
-        this[info.name] = parsed.json || parsed;
+        this[name] = parsed.json || parsed;
+        this.namesToFiles[name] = file;
     }
 
     afterParseFiles() {
-        for (const info of Object.values(filesToProcess)) {
-            if (info.afterParse) info.afterParse(this[info.name]);
+        for (const [name, info] of Object.entries(filesToProcess)) {
+            if (info.afterParse) info.afterParse(this[name], name);
         }
     }
 
@@ -128,17 +128,17 @@ class Map {
     }
 
     writeWar(name, file, outputLocation) {
-        const toWar = file.toWar(this[file.name]);
+        const toWar = file.toWar(this[name]);
 
         if (toWar.errors && toWar.errors.length) console.warn(toWar.errors);
 
         const folderPath = outputLocation || path.join(this.isMPQ ? path.join(path.resolve(this.location), '..') : this.location, "translated");
 
-        if (!fs.existsSync(path.dirname(path.join(folderPath, name)))){
-            fs.mkdirSync(path.dirname(path.join(folderPath, name)), {recursive:true});
+        if (!fs.existsSync(path.dirname(path.join(folderPath, this.namesToFiles[name])))){
+            fs.mkdirSync(path.dirname(path.join(folderPath, this.namesToFiles[name])), {recursive:true});
         }
 
-        fs.writeFileSync(path.join(folderPath, name), toWar.buffer || toWar);
+        fs.writeFileSync(path.join(folderPath, this.namesToFiles[name]), toWar.buffer || toWar);
     }
 
     async validateScript(script) {

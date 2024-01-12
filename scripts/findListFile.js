@@ -97,7 +97,6 @@ const scanFile = (map, file, seen, foundFiles) => {
         if (file == '(listfile)') checkFiles(map, str.split(/\r\n/), seen, foundFiles);
         else {
             const separator = fileSeparator(file);
-            if (str.includes('Whangchung')) console.log(file)
             for (const candidate of str.matchAll(fileRegex)) {
                 const idx = str.lastIndexOf(separator, candidate.index);
                 const newFile = str.substring(idx + 1, candidate.index + candidate[0].length).replace(/\.mdl$/i, '.mdx').replace(/\\+/g, '\\');

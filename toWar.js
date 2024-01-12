@@ -23,12 +23,12 @@ function getVal(translation, map, id) {
 
 function exportToWar(map, input, outputLocation) {
     for (const [name, file] of Object.entries(filesToProcess)) {
-        if (Object.keys(map[file.name]) == 0) continue;
+        if (Object.keys(map[name]) == 0) continue;
 
         if (file.props) {
             const reversedProps = Object.fromEntries(Object.entries(file.props).map(arr => [arr[1], arr[0]]));
-            for (const [id, props] of Object.entries(input[file.name])) {
-                const obj = [map[file.name].custom, map[file.name].original].find(o => o != null && o.hasOwnProperty(id));
+            for (const [id, props] of Object.entries(input[name])) {
+                const obj = [map[name].custom, map[name].original].find(o => o != null && o.hasOwnProperty(id));
                 if (obj == null) continue;
 
                 const translations = {};
@@ -51,7 +51,7 @@ function exportToWar(map, input, outputLocation) {
                     }
                 }
             }
-        } else if (name == "war3map.j") {            
+        } else if (name == "script") {            
             let newScript = [];
             let lastIdx = 0;
 
@@ -74,11 +74,11 @@ function exportToWar(map, input, outputLocation) {
             map.script = {buffer: Buffer.concat(newScript)};
             
             map.validateScript(map.script.buffer);
-        } else if (name == "war3map.wts") {
+        } else if (name == "strings") {//wts
             for (const key of Object.keys(map.strings)) {
                 map.strings[key] = input.strings[key]?.newTranslated || input.strings[key]?.oldTranslated || map.strings[key];
             }
-        } else if (name == "war3map.w3i") {   
+        } else if (name == "info") {//w3i
             for (const prop of ["name", "author", "description", "recommendedPlayers"]) {
                 map.info.map[prop] = getVal(input.info[prop], map, prop) || map.info.map[prop];
             }
@@ -96,10 +96,10 @@ function exportToWar(map, input, outputLocation) {
                     map.info[parent][id] = getVal(input.info[parent][id], map, parent + ":" + id) || map.info[parent][id]; 
                 }
             }
-        } else if (name == "war3mapSkin.txt" || name == "units\\CommandStrings.txt") {
-            for (const {id, parentId, data} of interfaceIterator(input[file.name])) {
+        } else if (name == "interface" || name == "commandStrings") {
+            for (const {id, parentId, data} of interfaceIterator(input[name])) {
                 const val = data?.newTranslated || data?.oldTranslated;
-                map[file.name][parentId][id] = val || map[file.name][parentId][id] ;
+                map[name][parentId][id] = val || map[name][parentId][id] ;
             }
         }
         map.writeWar(name, file, outputLocation);

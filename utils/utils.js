@@ -51,11 +51,11 @@ function* interfaceIterator(interface, type) {
 }
 
 function* mapIterator(map) {
-  for (const [id, file] of Object.entries(filesToProcess)) {
-    if (file.props) yield* objectIterator(map[file.name], file.name);
-    else if (id == "war3map.w3i") yield* infoIterator(map[file.name], file.name);
-    else if (id == "war3mapSkin.txt" || id == "units\\CommandStrings.txt") yield* interfaceIterator(map[file.name], file.name);
-    else yield* stringsIterator(map[file.name]);
+  for (const [name, file] of Object.entries(filesToProcess)) {
+    if (file.props) yield* objectIterator(map[name], name);
+    else if (name == "info") yield* infoIterator(map[name], name);
+    else if (name == "interface" || name == "commandStrings") yield* interfaceIterator(map[name], name);
+    else yield* stringsIterator(map[name]);
   }
 }
 

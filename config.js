@@ -2,7 +2,7 @@ const Translator = require('wc3maptranslator');
 const fs = require('fs');
 const interface = require('./utils/gameInterface');
 
-const toEntries = (data) => {
+const toEntries = (data, name) => {
     for (const entries of Object.values(data)) {
         for (const key of Object.keys(entries)) {
             const info = {}; 
@@ -16,83 +16,92 @@ const toEntries = (data) => {
 }
 
 const filesToProcess = {
-    "war3map.w3u": {
-        name: "units",
+    "units": {
         props: {"unam": "name", "upro": "properNames", "uawt": "awakenTip", "utip": "tip", "utub": "uberTip", "utpr": "reviveTip"},
-        ignore: ["unsf"]
+        ignore: ["unsf"],
+        paths: ["war3map.w3u", "war3campaign.w3u"]
     },
-    "war3map.w3a": {
-        name: "abilities",
+    "abilities": {
         props: {"aub1": "uberTip", "anam": "name", "atp1": "tip", "aret": "researchTip", "arut": "researchUberTip", "aut1": "unTip", "auu1": "unUberTip"},
-        ignore: ["ansf", "arhk", "ahky", "auhk"]
+        ignore: ["ansf", "arhk", "ahky", "auhk"],
+        paths: ["war3map.w3a", "war3campaign.w3a"]
     },
-    "war3map.w3t": {
+    "items": {
         name: "items",
-        props: {"unam": "name", "utub": "uberTip", "utip": "tip", "ides": "description"}
+        props: {"unam": "name", "utub": "uberTip", "utip": "tip", "ides": "description"},
+        paths: ["war3map.w3t", "war3campaign.w3t"]
     },
-    "war3map.w3h": {
+    "buffs": {
         name: "buffs",
-        props: {"fnam": "name", "fube": "uberTip", "ftip": "tip"}
+        props: {"fnam": "name", "fube": "uberTip", "ftip": "tip"},
+        paths: ["war3map.w3h", "war3campaign.w3h"]
     },
-    "war3map.w3q": {
-        name: "upgrades",
+    "upgrades": {
         props: {"gnam": "name", "gub1": "uberTip", "gtp1": "tip"},
-        ignore: ["gef1"]
+        ignore: ["gef1"],
+        paths: ["war3map.w3q", "war3campaign.w3q"]
     },
-    "war3map.w3b": {
-        name: "destructables",
-        props: {"bnam": "name", "bube": "uberTip", "btip": "tip"}
+    "destructables": {
+        props: {"bnam": "name", "bube": "uberTip", "btip": "tip"},
+        paths: ["war3map.w3b", "war3campaign.w3b"]
     },
-    "war3map.w3d": {
-        name: "doodads",
-        props: {"dnam": "name", "dube": "uberTip", "dtip": "tip"}
+    "doodads": {
+        props: {"dnam": "name", "dube": "uberTip", "dtip": "tip"},
+        paths: ["war3map.w3d", "war3campaign.w3d"]
     },
-    "war3map.w3i": {
-        name: "info",
+    "info": {
         toJson: Translator.Info.warToJson,
         toWar: Translator.Info.jsonToWar,
         afterParse: false,
-        empty: {}
+        empty: {},
+        paths: ["war3map.w3i", "war3campaign.w3i"]
     },
-    "war3map.j": {
-        name: "script",
+    "script": {
         toJson: (b) => b,
         toWar: (b) => b,
         afterParse: false,
-        empty: ""
+        empty: "",
+        paths: ["war3map.j", "scripts\\war3map.j", "war3map.lua", "scripts\\war3map.lua"]
     },
-    "war3mapSkin.txt": {
-        name: "interface",
+    "interface": {
         toJson: interface.toJson,
         toWar: interface.toWar,
         afterParse: false,
         empty: {},
-        ignore: ["Terrain", "WorldEditMisc", "WorldEditStrings", "CustomSkin"]
+        ignore: ["Terrain", "WorldEditMisc", "WorldEditStrings", "CustomSkin"],
+        paths: ["war3mapSkin.txt", "war3campaignSkin.txt"]
     },
-    "war3map.wts": {
-        name: "strings",
+    "strings": {
         toJson: Translator.Strings.warToJson,
         toWar: Translator.Strings.jsonToWar,
         afterParse: false,
-        empty: {}
+        empty: {},
+        paths: ["war3map.wts", "war3campaign.wts"]
     },
-    "units\\CommandStrings.txt": {
-        name: "commandStrings",
+    "commandStrings": {
         toJson: interface.toJson,
         toWar: interface.toWar,
         afterParse: false,
         empty: {},
-        ignore: []
+        ignore: [],
+        paths: ["units\\CommandStrings.txt"]
     }
 }
 
+const pathsToName = {};
 
-for (const file of Object.values(filesToProcess)) {
-    if (file.hasOwnProperty('afterParse') == false) file.afterParse = toEntries;
-    if (file.hasOwnProperty('empty') == false) file.empty = {custom: {}, original: {}};
-    if (file.hasOwnProperty('toJson') == false) file.toJson = Translator.Objects.warToJson.bind(null, file.name);
-    if (file.hasOwnProperty('toWar') == false) file.toWar = Translator.Objects.jsonToWar.bind(null, file.name);
+for (const name of Object.keys(filesToProcess)) {
+    for (const path of filesToProcess[name].paths) {
+        pathsToName[path] = name;
+    }
 }
 
-module.exports = {filesToProcess};
+for (const [name, file] of Object.entries(filesToProcess)) {
+    if (file.hasOwnProperty('afterParse') == false) file.afterParse = toEntries;
+    if (file.hasOwnProperty('empty') == false) file.empty = {custom: {}, original: {}};
+    if (file.hasOwnProperty('toJson') == false) file.toJson = Translator.Objects.warToJson.bind(null, name);
+    if (file.hasOwnProperty('toWar') == false) file.toWar = Translator.Objects.jsonToWar.bind(null, name);
+}
+
+module.exports = {filesToProcess, pathsToName};
 
