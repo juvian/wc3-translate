@@ -128,6 +128,8 @@ class Map {
     }
 
     writeWar(name, file, outputLocation) {
+        if (!this.namesToFiles[name]) return console.warn(name + ' not found in map, skipping writing the file');
+
         const toWar = file.toWar(this[name]);
 
         if (toWar.errors && toWar.errors.length) console.warn(toWar.errors);

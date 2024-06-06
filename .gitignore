@@ -7,3 +7,4 @@ data/*
 !data/blizzard.j
 pjass.exe
 test.js
+test/
